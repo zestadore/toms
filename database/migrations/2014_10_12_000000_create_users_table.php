@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('mobile')->unique();
             $table->timestamp('mobile_verified_at')->nullable();
             $table->string('password');
+            $table->text('image')->nullable();
             $table->enum('role',  ['user', 'partner', 'admin'])->default('user');
             $table->integer('status')->default(1);
             $table->rememberToken();
