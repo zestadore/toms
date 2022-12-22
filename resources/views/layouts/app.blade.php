@@ -148,6 +148,29 @@
                   </li>
                 </ul>
               </li>
+              <li class="nav-item {{ (request()->is('admin/hotels*'))? 'menu-open' : '' }}">
+                <a href="#" class="nav-link {{ (request()->is('admin/hotels*'))? 'active' : '' }}">
+                  <i class="nav-icon fas fa-bed"></i>
+                  <p>
+                    Hotels/Resorts
+                    <i class="right fas fa-angle-left"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="{{route('admin.hotels.index')}}" class="nav-link {{ (request()->is('admin/hotels'))? 'active' : '' }}">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>List</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{route('admin.hotels.create')}}" class="nav-link {{ (request()->is('admin/hotels/create'))? 'active' : '' }}">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Create</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->

@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 use Illuminate\Support\Facades\Crypt;
-use App\Models\Destination;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ValidateDestination extends FormRequest

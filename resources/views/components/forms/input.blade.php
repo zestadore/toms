@@ -21,7 +21,7 @@
 @elseif($type=='number')
     <div class="form-group">
         <label for="{{$name}}">{{$title}} @if($required=="True")<span style="color:red;"> *</span>@endif</label>
-        <input id="{{$id}}" type="{{$type}}" class="{{$class}}" name="{{$name}}" value="{{ old($name) }}" placeholder="{{$title}}" @if($required=="True") required @endif autocomplete="{{$name}}" autofocus pattern="^[0-9]">
+        <input id="{{$id}}" type="{{$type}}" class="{{$class}}" name="{{$name}}" value="{{ old($name) }}" placeholder="{{$title}}" @if($required=="True") required @endif autocomplete="{{$name}}" autofocus>
         @error($name)
             <span class="error mt-2 text-danger" role="alert">
                 <strong>{{ $message }}</strong>
