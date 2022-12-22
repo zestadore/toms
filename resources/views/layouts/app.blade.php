@@ -148,6 +148,29 @@
                   </li>
                 </ul>
               </li>
+              <li class="nav-item {{ (request()->is('admin/categories*'))? 'menu-open' : '' }}">
+                <a href="#" class="nav-link {{ (request()->is('admin/categories*'))? 'active' : '' }}">
+                  <i class="nav-icon fas fa-project-diagram"></i>
+                  <p>
+                    Categories
+                    <i class="right fas fa-angle-left"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="{{route('admin.categories.index')}}" class="nav-link {{ (request()->is('admin/categories'))? 'active' : '' }}">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>List</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{route('admin.categories.create')}}" class="nav-link {{ (request()->is('admin/categories/create'))? 'active' : '' }}">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Create</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
               <li class="nav-item {{ (request()->is('admin/hotels*'))? 'menu-open' : '' }}">
                 <a href="#" class="nav-link {{ (request()->is('admin/hotels*'))? 'active' : '' }}">
                   <i class="nav-icon fas fa-bed"></i>

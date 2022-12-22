@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Hotel;
 use App\Models\Destination;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use DataTables;
 use App\Http\Requests\ValidateHotel;
@@ -46,7 +47,8 @@ class HotelController extends Controller
     public function create()
     {
         $destinations=Destination::where('status',1)->get();
-        return view('application.hotels.create',['destinations'=>$destinations]);
+        $categories=Category::where('status',1)->get();
+        return view('application.hotels.create',['destinations'=>$destinations,'categories'=>$categories]);
     }
 
     public function store(ValidateHotel $request)
@@ -67,7 +69,7 @@ class HotelController extends Controller
             'destination_id'=>Crypt::decrypt($request->destination_id),
             'location'=>$request->location,
             'inventory'=>$request->inventory??0,
-            'category_id'=>$request->category_id??null,
+            'category_id'=>Crypt::decrypt($request->category_id)??null,
             'contact'=>$request->contact,
             'reservation_contact'=>$request->reservation_contact,
             'email'=>$request->email,
@@ -94,7 +96,8 @@ class HotelController extends Controller
     {
         $hotel=Hotel::find(Crypt::decrypt($id));
         $destinations=Destination::where('status',1)->get();
-        return view('application.hotels.edit',['destinations'=>$destinations,'data'=>$hotel]);
+        $categories=Category::where('status',1)->get();
+        return view('application.hotels.edit',['destinations'=>$destinations,'categories'=>$categories,'data'=>$hotel]);
     }
 
     public function update(ValidateHotel $request, $id)
@@ -119,7 +122,7 @@ class HotelController extends Controller
             'destination_id'=>Crypt::decrypt($request->destination_id),
             'location'=>$request->location,
             'inventory'=>$request->inventory??0,
-            'category_id'=>$request->category_id??null,
+            'category_id'=>Crypt::decrypt($request->category_id)??null,
             'contact'=>$request->contact,
             'reservation_contact'=>$request->reservation_contact,
             'email'=>$request->email,

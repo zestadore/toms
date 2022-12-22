@@ -87,6 +87,11 @@
                                         <label>Category </label>
                                         <select class="form-control select2bs4" name="category_id" id="category_id" style="width: 100%;">
                                           <option value="">Select a category</option>
+                                          @foreach ($categories as $item)
+                                              <option value="{{$item->id}}" @if (Crypt::decrypt($item->id)==$data->category_id)
+                                                selected="selected" 
+                                            @endif>{{$item->category}}</option>
+                                          @endforeach
                                         </select>
                                     </div>
                                 </div>
