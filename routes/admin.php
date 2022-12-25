@@ -8,4 +8,5 @@ Route::middleware(['auth'])->name('admin.')->prefix('admin')->namespace("App\Htt
     Route::resource('destinations', DestinationController::class);
     Route::resource('categories', CategoryController::class);
     Route::resource('hotels', HotelController::class);
+    Route::resource('hotels.rooms', RoomCategoryController::class);
 });
