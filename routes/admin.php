@@ -7,6 +7,8 @@ Route::middleware(['auth'])->name('admin.')->prefix('admin')->namespace("App\Htt
 	Route::get('/dashboard', [App\Http\Controllers\Admin\HomeController::class, 'dashboard'])->name('dashboard')->middleware('can:isAdmin');
     Route::resource('destinations', DestinationController::class);
     Route::resource('categories', CategoryController::class);
+    //Hotels part
     Route::resource('hotels', HotelController::class);
     Route::resource('hotels.rooms', RoomCategoryController::class);
+    Route::resource('hotels.date-plans', DatePlanController::class);
 });

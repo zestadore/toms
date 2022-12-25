@@ -1,6 +1,6 @@
 @extends('layouts.app')
     @section('title')
-        <title>TOMS | Hotels</title>
+        <title>TOMS | Date plans</title>
     @endsection
     @section('css')
         <link rel="stylesheet" href="{{asset('assets/admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
@@ -10,12 +10,13 @@
     @endsection
     @section('breadcrump')
         <div class="col-sm-6">
-            <h1 class="m-0">Hotels</h1>
+            <h1 class="m-0">Date plans</h1>
         </div><!-- /.col -->
         <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="{{route('dashboard')}}">Dashboard</a></li>
-            <li class="breadcrumb-item active">Hotels</li>
+            <li class="breadcrumb-item"><a href="{{route('admin.hotels.index')}}">Hotels</a></li>
+            <li class="breadcrumb-item active">Date plans</li>
             </ol>
         </div><!-- /.col -->
     @endsection
@@ -43,7 +44,7 @@
                     <div class="card-header">
                       <h3 class="card-title">
                         <i class="fas fa-bed"></i>
-                        Hotels
+                        Date plans
                       </h3>
                         <button type="button" class="btn btn-outline-info mr-1 mb-3 btn-sm" id="add-new" style="float:right;">
                             <i class="fa fa-fw fa-plus mr-1"></i> Add New
@@ -52,9 +53,6 @@
                     <div class="card-body">
                         <form id="filterfordatatable" class="form-horizontal" onsubmit="event.preventDefault();">
                             <div class="row ">
-                                <div class="col">
-                                    <input type="text" name="search" class="form-control" placeholder="Search with hotel">
-                                </div>
                                 <div class="col">
                                     <select name="status_search" id="status_search" class="form-control">
                                         <option value="">Search with status</option>
@@ -68,9 +66,9 @@
                             <thead>
                                 <tr>
                                     <th class="nosort">#</th>
-                                    <th>{{ __('Image') }}</th>
+                                    <th>{{ __('Valid from') }}</th>
+                                    <th>{{ __('Valid to') }}</th>
                                     <th>{{ __('Hotel') }}</th>
-                                    <th>{{ __('Destination') }}</th>
                                     <th>{{ __('Status') }}</th>
                                     <th class="nosort">Action</th>
                                 </tr>
@@ -93,6 +91,8 @@
         <script>
             function drawTable()
             {
+                var url='{{route("admin.hotels.date-plans.index","ID")}}';
+                url=url.replace("ID",'{{$hotel_id}}');
                 var table = $('#item-table').DataTable({
                     processing: true,
                     serverSide: true,
@@ -102,7 +102,7 @@
                     "pagingType": "full_numbers",
                     "dom": "<'row'<'col-sm-12 col-md-12 right'B>><'row'<'col-sm-12'tr>><'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
                     ajax: {
-                        "url": '{{route("admin.hotels.index")}}',
+                        "url": url,
                         "data": function(d) {
                             var searchprams = $('#filterfordatatable').serializeArray();
                             var indexed_array = {};
@@ -118,24 +118,16 @@
                             name: 'name'
                         },
                         {
-                            data: 'image_path',
-                            name: 'image_path',
-                            render: function(data) {
-                                if (data) {
-                                    return "<img class='img-circle elevation-2 responsive' src='"+data+"' width=50 height=50/>";
-                                }else{
-                                    return null;
-                                }
-                                
-                            }
+                            data: 'valid_from_format',
+                            name: 'valid_from_format'
+                        },
+                        {
+                            data: 'valid_to_format',
+                            name: 'valid_to_format'
                         },
                         {
                             data: 'hotel',
                             name: 'hotel'
-                        },
-                        {
-                            data: 'destination',
-                            name: 'destination'
                         },
                         {
                             data: 'status',
@@ -170,7 +162,8 @@
             drawTable();
 
             function editData(id){
-                var url="{{route('admin.hotels.edit','ID')}}";
+                var url="{{route('admin.hotels.date-plans.edit',['HOTEL_ID','ID'])}}";
+                url=url.replace('HOTEL_ID','{{$hotel_id}}');
                 url=url.replace('ID',id);
                 window.location.href=url;
             }
@@ -185,7 +178,8 @@
                 dangerMode: true,
                 }).then((result) => {
                     if (result) {
-                        var url="{{route('admin.hotels.destroy','ID')}}";
+                        var url="{{route('admin.hotels.date-plans.destroy',['HOTEL_ID','ID'])}}";
+                        url=url.replace('HOTEL_ID','{{$hotel_id}}');
                         url=url.replace('ID',id);
                         $.ajax({
                             url: url,
@@ -208,19 +202,10 @@
             }
 
             $('#add-new').click(function(){
-                window.location.href="{{route('admin.hotels.create')}}";
+                var url="{{route('admin.hotels.date-plans.create','ID')}}";
+                url=url.replace('ID','{{$hotel_id}}');
+                window.location.href=url;
             });
 
-            function gotoRooms(id){
-                var url="{{route('admin.hotels.rooms.index','ID')}}";
-                url=url.replace('ID',id);
-                window.location.href=url;
-            }
-
-            function gotoDatePlans(id){
-                var url="{{route('admin.hotels.date-plans.index','ID')}}";
-                url=url.replace('ID',id);
-                window.location.href=url;
-            }
         </script>
     @endsection
