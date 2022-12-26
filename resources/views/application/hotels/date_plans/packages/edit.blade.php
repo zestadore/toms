@@ -1,6 +1,6 @@
 @extends('layouts.app')
     @section('title')
-        <title>TOMS | Date plans</title>
+        <title>TOMS | Packages</title>
     @endsection
     @section('css')
         <link rel="stylesheet" href="{{asset('assets/admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
@@ -12,14 +12,15 @@
     @endsection
     @section('breadcrump')
         <div class="col-sm-6">
-            <h1 class="m-0">Date plans</h1>
+            <h1 class="m-0">Packages</h1>
         </div><!-- /.col -->
         <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="{{route('dashboard')}}">Dashboard</a></li>
             <li class="breadcrumb-item"><a href="{{route('admin.hotels.index')}}">Hotels</a></li>
             <li class="breadcrumb-item"><a href="{{route('admin.hotels.date-plans.index',$hotel_id)}}">Date plans</a></li>
-            <li class="breadcrumb-item active">Create room</li>
+            <li class="breadcrumb-item"><a href="{{route('admin.hotels.date-plans.packages.index',[$hotel_id,$date_plan_id])}}">Packages</a></li>
+            <li class="breadcrumb-item active">Edit package</li>
             </ol>
         </div><!-- /.col -->
     @endsection
@@ -46,18 +47,35 @@
                 <div class="card card-default color-palette-box">
                     <div class="card-header">
                       <h3 class="card-title">
-                        <i class="far fa-calendar-check"></i>
-                        Create date plan
+                        <i class="fas fa-suitcase"></i>
+                        Edit package
                       </h3>
                     </div>
                     <div class="card-body">
-                        <form action="{{route('admin.hotels.date-plans.store',$hotel_id)}}" method="post" id="addNewForm">@csrf
+                        <form action="{{route('admin.hotels.date-plans.packages.update',[$hotel_id,$date_plan_id,$data->id])}}" method="post" id="addNewForm">@csrf
+                            @method('put')
                             <div class="row">
-                                <div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">
-                                    <x-forms.input class="form-control {{ $errors->has('valid_from') ? ' is-invalid' : '' }}" title="Valid from" name="valid_from" id="valid_from" type="date" required="True"/>
+                                <div class="col-lg-4 col-sm-4 col-md-12 col-xs-12">
+                                    <x-forms.input class="form-control {{ $errors->has('package') ? ' is-invalid' : '' }}" title="Package name" name="package" id="package" type="text" required="True"/>
                                 </div>
-                                <div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">
-                                    <x-forms.input class="form-control {{ $errors->has('valid_to') ? ' is-invalid' : '' }}" title="Valid to" name="valid_to" id="valid_to" type="date" required="True"/>
+                                <div class="col-lg-4 col-sm-4 col-md-12 col-xs-12">
+                                    <x-forms.input class="form-control {{ $errors->has('no_nights') ? ' is-invalid' : '' }}" title="Duration(No of nights)" name="no_nights" id="no_nights" type="number" required="True"/>
+                                </div>
+                                <div class="col-lg-4 col-sm-4 col-md-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label for="meal_plan">Meal plan <span style="color:red;">*</span></label>
+                                        <select name="meal_plan" id="meal_plan" class="form-control" required>
+                                            <option value="CP">CP</option>
+                                            <option value="EP">EP</option>
+                                            <option value="MAP">MAP</option>
+                                            <option value="AP">AP</option>
+                                        </select>
+                                        @error('meal_plan')
+                                            <span class="error mt-2 text-danger" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
@@ -91,19 +109,25 @@
             $(function () {
                 $('#addNewForm').validate({
                     rules: {
-                        valid_from: {
+                        package: {
                             required: true
                         },
-                        valid_to: {
+                        no_nights: {
+                            required: true
+                        },
+                        meal_plan: {
                             required: true
                         },
                     },
                     messages: {
-                        valid_from: {
-                            required: "Please enter the date valid from"
+                        package: {
+                            required: "Please enter the package name"
                         },
-                        valid_to: {
-                            required: "Please enter the date valid to"
+                        no_nights: {
+                            required: "Please enter no of nights"
+                        },
+                        meal_plan: {
+                            required: "Please select meal plan"
                         },
                     },
                     errorElement: 'span',
@@ -120,11 +144,18 @@
                 });
             });
 
-            $('#valid_from').datetimepicker({
-                format: 'L'
-            });
-            $('#valid_to').datetimepicker({
-                format: 'L'
-            });
+            function prefillForm(){
+                $('#package').val('{{$data->package}}');
+                $('#no_nights').val('{{$data->no_nights}}');
+                $('#description').val('{{$data->description}}');
+                $('#meal_plan').val('{{$data->meal_plan}}');
+                var status='{{$data->status}}';
+                if(status==0){
+                    $("#customSwitch1").prop('checked', false);
+                }else{
+                    $("#customSwitch1").prop('checked', true);
+                }
+            }
+            prefillForm();
         </script>
     @endsection

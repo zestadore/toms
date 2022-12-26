@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ValidateDatePlan extends FormRequest
+class ValidatePackage extends FormRequest
 {
     
     public function authorize()
@@ -15,8 +15,9 @@ class ValidateDatePlan extends FormRequest
     public function rules()
     {
         return [
-            'valid_from' => 'required|date',
-            'valid_to' => 'required|date|after_or_equal:valid_from',
+            'package' => 'required',
+            'no_nights' => 'required|numeric|min:1',
+            'meal_plan' => 'required',
         ];
     }
 }
