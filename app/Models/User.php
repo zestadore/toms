@@ -18,6 +18,7 @@ class User extends Authenticatable
         'role',
         'email',
         'password',
+        'image',
     ];
 
     protected $hidden = [
@@ -28,5 +29,15 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    protected $appends=['image_path'];
+
+    public function getImagePathAttribute(){
+        if($this->attributes['image']!=null){
+            return url('/') .'/uploads/profiles/'.$this->attributes['image'];
+        }else{
+            return null;
+        }
+    }
 
 }

@@ -12,4 +12,5 @@ Route::middleware(['auth'])->name('admin.')->prefix('admin')->namespace("App\Htt
     Route::resource('hotels.rooms', RoomCategoryController::class);
     Route::resource('hotels.date-plans', DatePlanController::class);
     Route::resource('hotels.date-plans.packages', PackageController::class);
+    Route::resource('hotels.date-plans.packages.rates', PackageRateController::class);
 });

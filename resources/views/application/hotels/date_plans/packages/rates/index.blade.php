@@ -1,6 +1,6 @@
 @extends('layouts.app')
     @section('title')
-        <title>TOMS | Packages</title>
+        <title>TOMS | Package rates</title>
     @endsection
     @section('css')
         <link rel="stylesheet" href="{{asset('assets/admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
@@ -10,14 +10,15 @@
     @endsection
     @section('breadcrump')
         <div class="col-sm-6">
-            <h1 class="m-0">Packages</h1>
+            <h1 class="m-0">Package rates</h1>
         </div><!-- /.col -->
         <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="{{route('dashboard')}}">Dashboard</a></li>
             <li class="breadcrumb-item"><a href="{{route('admin.hotels.index')}}">Hotels</a></li>
             <li class="breadcrumb-item"><a href="{{route('admin.hotels.date-plans.index',$hotel_id)}}">Date Plans</a></li>
-            <li class="breadcrumb-item active">Packages</li>
+            <li class="breadcrumb-item"><a href="{{route('admin.hotels.date-plans.packages.index',[$hotel_id,$date_plan_id])}}">Packages</a></li>
+            <li class="breadcrumb-item active">Rates</li>
             </ol>
         </div><!-- /.col -->
     @endsection
@@ -44,8 +45,8 @@
                 <div class="card card-default color-palette-box">
                     <div class="card-header">
                       <h3 class="card-title">
-                        <i class="fas fa-suitcase"></i>
-                        Packages
+                        <i class="fas fa-rupee-sign"></i>
+                        Package rates
                       </h3>
                         <button type="button" class="btn btn-outline-info mr-1 mb-3 btn-sm" id="add-new" style="float:right;">
                             <i class="fa fa-fw fa-plus mr-1"></i> Add New
@@ -67,10 +68,11 @@
                             <thead>
                                 <tr>
                                     <th class="nosort">#</th>
-                                    <th>{{ __('Package') }}</th>
+                                    <th>{{ __('Room') }}</th>
                                     <th>{{ __('Meal plan') }}</th>
-                                    <th>{{ __('Duration') }}</th>
-                                    <th>{{ __('Status') }}</th>
+                                    <th>{{ __('Room rates') }}</th>
+                                    <th>{{ __('Meal rates(Adult / Child)') }}</th>
+                                    <th>{{ __('Applicable days') }}</th>
                                     <th class="nosort">Action</th>
                                 </tr>
                             </thead>
@@ -92,9 +94,10 @@
         <script>
             function drawTable()
             {
-                var url='{{route("admin.hotels.date-plans.packages.index",["HOTEL_ID","DATE_PLAN_ID"])}}';
+                var url='{{route("admin.hotels.date-plans.packages.rates.index",["HOTEL_ID","DATE_PLAN_ID","PACKAGE_ID"])}}';
                 url=url.replace('HOTEL_ID','{{$hotel_id}}');
                 url=url.replace('DATE_PLAN_ID','{{$date_plan_id}}');
+                url=url.replace('PACKAGE_ID','{{$package_id}}');
                 var table = $('#item-table').DataTable({
                     processing: true,
                     serverSide: true,
@@ -120,28 +123,24 @@
                             name: 'name'
                         },
                         {
-                            data: 'package',
-                            name: 'package'
+                            data: 'room',
+                            name: 'room'
                         },
                         {
-                            data: 'meal_plan',
-                            name: 'meal_plan'
+                            data: 'meal',
+                            name: 'meal'
                         },
                         {
-                            data: 'no_nights',
-                            name: 'no_nights'
+                            data: 'room_rates',
+                            name: 'room_rates'
                         },
                         {
-                            data: 'status',
-                            name: 'status',
-                            render: function(data) {
-                                if (data ==1) {
-                                    return "<span class='badge badge-success'>Active</span>";
-                                }else{
-                                    return "<span class='badge badge-danger'>Inactive</span>";
-                                }
-                                
-                            }
+                            data: 'meal_rates',
+                            name: 'meal_rates'
+                        },
+                        {
+                            data: 'days',
+                            name: 'days'
                         },
                         {
                             data: 'action',
@@ -164,9 +163,10 @@
             drawTable();
 
             function editData(id){
-                var url="{{route('admin.hotels.date-plans.packages.edit',['HOTEL_ID','DATE_PLAN_ID','ID'])}}";
+                var url="{{route('admin.hotels.date-plans.packages.rates.edit',['HOTEL_ID','DATE_PLAN_ID','PACKAGE_ID','ID'])}}";
                 url=url.replace('HOTEL_ID','{{$hotel_id}}');
                 url=url.replace('DATE_PLAN_ID','{{$date_plan_id}}');
+                url=url.replace('PACKAGE_ID','{{$package_id}}');
                 url=url.replace('ID',id);
                 window.location.href=url;
             }
@@ -181,9 +181,10 @@
                 dangerMode: true,
                 }).then((result) => {
                     if (result) {
-                        var url="{{route('admin.hotels.date-plans.packages.destroy',['HOTEL_ID','DATE_PLAN_ID','ID'])}}";
+                        var url="{{route('admin.hotels.date-plans.packages.rates.destroy',['HOTEL_ID','DATE_PLAN_ID','PACKAGE_ID','ID'])}}";
                         url=url.replace('HOTEL_ID','{{$hotel_id}}');
                         url=url.replace('DATE_PLAN_ID','{{$date_plan_id}}');
+                        url=url.replace('PACKAGE_ID','{{$package_id}}');
                         url=url.replace('ID',id);
                         $.ajax({
                             url: url,
@@ -206,19 +207,12 @@
             }
 
             $('#add-new').click(function(){
-                var url="{{route('admin.hotels.date-plans.packages.create',['HOTEL_ID','DATE_PLAN_ID'])}}";
+                var url="{{route('admin.hotels.date-plans.packages.rates.create',['HOTEL_ID','DATE_PLAN_ID','PACKAGE_ID'])}}";
                 url=url.replace('HOTEL_ID','{{$hotel_id}}');
                 url=url.replace('DATE_PLAN_ID','{{$date_plan_id}}');
+                url=url.replace('PACKAGE_ID','{{$package_id}}');
                 window.location.href=url;
             });
-
-            function gotoRates(id){
-                var url="{{route('admin.hotels.date-plans.packages.rates.index',['HOTEL_ID','DATEPLAN_ID','PACKAGE_ID'])}}";
-                url=url.replace('HOTEL_ID','{{$hotel_id}}');
-                url=url.replace('DATEPLAN_ID','{{$date_plan_id}}');
-                url=url.replace('PACKAGE_ID',id);
-                window.location.href=url;
-            }
 
         </script>
     @endsection

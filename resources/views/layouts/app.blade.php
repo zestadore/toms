@@ -69,7 +69,7 @@
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
           <span class="dropdown-item dropdown-header">Hi, {{Auth::user()->first_name}} {{Auth::user()->last_name}}<p>{{strtoupper(Auth::user()->role)}} </p></span>
           <div class="dropdown-divider"></div>
-          <a href="Javascript::void()" class="dropdown-item">
+          <a href="{{route('profile')}}" class="dropdown-item">
             <i class="fas fa-user mr-2"></i> Profile
           </a>
           <div class="dropdown-divider"></div>
@@ -104,7 +104,7 @@
           @if (Auth::user()->image==null)
             <img src="{{asset('assets/admin/dist/img/user2-160x160.jpg')}}" class="img-circle elevation-2" alt="User Image">
           @else
-            <img src="{{Auth::user()->profile_picture}}" class="img-circle elevation-2" alt="User Image">
+            <img src="{{Auth::user()->image_path}}" class="img-circle elevation-2" alt="User Image" width=50 height=50>
           @endif
         </div>
         <div class="info">

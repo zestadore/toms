@@ -26,3 +26,6 @@ Route::get('/optimize', function () {
 Route::get('/seed', function () {
     Artisan::call("db:seed");
 });
+
+Route::get('/profile', [App\Http\Controllers\HomeController::class, 'authUserProfile'])->name('profile')->middleware('auth');
+Route::post('/update-profile', [App\Http\Controllers\HomeController::class, 'updateProfile'])->name('profile.update')->middleware('auth');
