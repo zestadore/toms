@@ -23,6 +23,7 @@
   </style>
 </head>
 <body class="hold-transition login-page">
+    <a href="Javascript::void()" class="h1"><img src="{{asset('assets/toms.png')}}" width=90%></a>
     <div class="login-box">
         <!-- /.login-logo -->
         <div class="card card-outline card-primary">

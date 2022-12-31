@@ -34,7 +34,9 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
-
+      <li class="nav-item">
+        <a href="Javascript::void()" class="h1"><img src="{{asset('assets/toms.png')}}" width=50% style="float:right;"></a>
+      </li>
       <!-- Notifications Dropdown Menu -->
       <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
@@ -73,7 +75,7 @@
             <i class="fas fa-user mr-2"></i> Profile
           </a>
           <div class="dropdown-divider"></div>
-          <a href="Javascript::void()" class="dropdown-item">
+          <a href="{{route('change.password')}}" class="dropdown-item">
             <i class="fas fa-pencil-alt mr-2"></i> Change Password
           </a>
           <div class="dropdown-divider"></div>

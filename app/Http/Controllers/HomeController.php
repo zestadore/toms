@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class HomeController extends Controller
 {
@@ -53,6 +54,23 @@ class HomeController extends Controller
             return redirect()->back()->with('success', 'Successfully updated the data.');
         }else{
             return redirect()->back()->with('error', 'Failed to update the data. Please try again.');
+        }
+    }
+
+    public function changePassword()
+    {
+        return view('application.profile.change_password');
+    }
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|min:8|confirmed',
+        ]);
+        $res=Auth::user()->update(['password'=>Hash::make($request->password)]);
+        if($res){
+            return redirect()->back()->with(['success'=>'Password updated successfully']);
+        }else{
+            return redirect()->back()->with(['error'=>'Failed to update the password']);
         }
     }
 }
