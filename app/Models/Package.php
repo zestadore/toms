@@ -12,9 +12,14 @@ class Package extends Model
     use HasFactory,SoftDeletes;
     protected $table = 'packages';
     protected $guarded=[];
+    protected $hidden=['self'];
 
     public function getIdAttribute(){
         return Crypt::encrypt($this->attributes['id']);
+    }
+
+    public function getSelfAttribute(){
+        return $this->attributes['id'];
     }
 
     public static function boot()
@@ -29,6 +34,10 @@ class Package extends Model
         {
             $model->updated_by = Auth::user()->id;
         });
+    }
+
+    public function packageRates(){
+        return $this->hasMany(PackageRate::class, 'package_id', 'self');
     }
 
 }

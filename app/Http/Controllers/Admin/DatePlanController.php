@@ -8,6 +8,7 @@ use DataTables;
 use App\Http\Requests\ValidateDatePlan;
 use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
+use App\Jobs\CopyPackageJob;
 
 class DatePlanController extends Controller
 {
@@ -105,5 +106,23 @@ class DatePlanController extends Controller
         }else{
             return response()->json(['error'=>"Failed to delete the data, kindly try again!"]);
         }
+    }
+
+    public function getDatePlanList($hotel_id)
+    {
+        $datePlans=DatePlan::with('packages')->where('hotel_id',$hotel_id)->where('status',1)->get();
+        $data=[];
+        foreach($datePlans as $datePlan){
+            if(count($datePlan->packages)>0){
+                $data[]=$datePlan;
+            }
+        }
+        return $data;
+    }
+
+    public function copyPackages(Request $request)
+    {
+        CopyPackageJob::dispatch($request->copyFrom,$request->copyTo);
+        return response()->json(['message'=>"The packages & rates will be copied within a couple of minutes!"]);
     }
 }

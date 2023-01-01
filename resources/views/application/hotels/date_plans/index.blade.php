@@ -79,6 +79,33 @@
                   </div><br>
             </div><!--/. container-fluid -->
         </section>
+        <!-- /.modal -->
+        <div class="modal fade" id="copy-modal">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Copy packages & rates</h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="form-group">
+                        <select name="copy_from" id="copy_from" class="form-control">
+                            <option value="">Select date plan</option>
+                        </select>
+                  </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  <button type="button" id="copy-btn" class="btn btn-primary" data-id=0>Copy</button>
+                </div>
+              </div>
+              <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+          </div>
+          <!-- /.modal -->
     @endsection
     @section('scripts')
         <script src="{{asset('assets/admin/plugins/datatables/jquery.dataTables.min.js')}}"></script>
@@ -89,6 +116,7 @@
         <script src="{{asset('assets/admin/plugins/datatables-buttons/js/buttons.bootstrap4.min.js')}}"></script>
         <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
         <script>
+            let optionList = document.getElementById('copy_from').options;
             function drawTable()
             {
                 var url='{{route("admin.hotels.date-plans.index","ID")}}';
@@ -200,7 +228,7 @@
                                     swal("Good job!", "You deleted the data!", "success");
                                     drawTable();
                                 }else{
-                                    swal("Oops!", "Failed to deleted the data!", "danger");
+                                    swal("Oops!", "Failed to deleted the data!", "warning");
                                 }
                             },
                         });
@@ -212,6 +240,53 @@
                 var url="{{route('admin.hotels.date-plans.create','ID')}}";
                 url=url.replace('ID','{{$hotel_id}}');
                 window.location.href=url;
+            });
+
+            function copyFrom(id){
+                $('#copy-modal').modal('show');
+                var url="{{route('admin.dateplan.list','HOTEL_ID')}}";
+                url=url.replace('HOTEL_ID','{{Crypt::decrypt($hotel_id)}}');
+                $.ajax({
+                    url: url,
+                    type:"get",
+                    success:function(response){
+                        // console.log(response);
+                        document.getElementById("copy_from").options.length = 0;
+                        optionList.clear;
+                        let options=response;
+                        optionList.add(
+                            new Option("Select the date plan", "", "")
+                        )
+                        options.forEach(option =>
+                            optionList.add(
+                                new Option(option.date_plan_name, option.id, option.selected)
+                            )
+                        );
+                        $('#copy-btn').attr('data-id',id);
+                    },
+                });
+            }
+
+            $('#copy-btn').click(function(){
+                var id=$('#copy-btn').data('id');
+                var copyFrom=$('#copy_from').val();
+                if(copyFrom=="" || copyFrom==null){
+                    swal("Oops!", "Kindly select the date plan to copy!", "warning");
+                }else{
+                    $.ajax({
+                        url: "{{route('admin.packages.copy')}}",
+                        type:"post",
+                        data:{
+                            "_token": "{{ csrf_token() }}",
+                            "copyFrom":copyFrom,
+                            'copyTo':id
+                        },
+                        success:function(response){
+                            swal("Good job!", response.message, "success");
+                            $('#copy-modal').modal('hide');
+                        },
+                    });
+                }
             });
 
         </script>
