@@ -10,6 +10,7 @@ Route::middleware(['auth'])->name('admin.')->prefix('admin')->namespace("App\Htt
     //Hotels part
     Route::resource('hotels', HotelController::class);
     Route::resource('hotels.rooms', RoomCategoryController::class);
+    Route::resource('hotels.addons', HotelAddOnController::class);
     Route::resource('hotels.date-plans', DatePlanController::class);
     Route::get('get-date-plan-list/{id}', [App\Http\Controllers\Admin\DatePlanController::class, 'getDatePlanList'])->name('dateplan.list');
     Route::post('copy-packages', [App\Http\Controllers\Admin\DatePlanController::class, 'copyPackages'])->name('packages.copy');
