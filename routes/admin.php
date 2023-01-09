@@ -17,4 +17,7 @@ Route::middleware(['auth'])->name('admin.')->prefix('admin')->namespace("App\Htt
     Route::post('copy-packages', [App\Http\Controllers\Admin\DatePlanController::class, 'copyPackages'])->name('packages.copy');
     Route::resource('hotels.date-plans.packages', PackageController::class);
     Route::resource('hotels.date-plans.packages.rates', PackageRateController::class);
+    //Vehicles part
+    Route::resource('vehicles', VehicleController::class);
+    Route::resource('vehicles.addons', VehicleAddOnController::class);
 });

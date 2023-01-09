@@ -1,6 +1,6 @@
 @extends('layouts.app')
     @section('title')
-        <title>TOMS | Agents</title>
+        <title>TOMS | Vehicles</title>
     @endsection
     @section('css')
         <link rel="stylesheet" href="{{asset('assets/admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
@@ -10,12 +10,12 @@
     @endsection
     @section('breadcrump')
         <div class="col-sm-6">
-            <h1 class="m-0">Agents</h1>
+            <h1 class="m-0">Vehicles</h1>
         </div><!-- /.col -->
         <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="{{route('dashboard')}}">Dashboard</a></li>
-            <li class="breadcrumb-item active">Agents</li>
+            <li class="breadcrumb-item active">Vehicles</li>
             </ol>
         </div><!-- /.col -->
     @endsection
@@ -42,8 +42,8 @@
                 <div class="card card-default color-palette-box">
                     <div class="card-header">
                       <h3 class="card-title">
-                        <i class="fas fa-users"></i>
-                        Agents
+                        <i class="fas fa-taxi"></i>
+                        Vehicles
                       </h3>
                         <button type="button" class="btn btn-outline-info mr-1 mb-3 btn-sm" id="add-new" style="float:right;">
                             <i class="fa fa-fw fa-plus mr-1"></i> Add New
@@ -53,7 +53,7 @@
                         <form id="filterfordatatable" class="form-horizontal" onsubmit="event.preventDefault();">
                             <div class="row ">
                                 <div class="col">
-                                    <input type="text" name="search" class="form-control" placeholder="Search with agent">
+                                    <input type="text" name="search" class="form-control" placeholder="Search with vehicle">
                                 </div>
                             </div>
                         </form><br>
@@ -61,10 +61,11 @@
                             <thead>
                                 <tr>
                                     <th class="nosort">#</th>
-                                    <th>{{ __('Agent') }}</th>
-                                    <th>{{ __('State') }}</th>
-                                    <th>{{ __('Contact') }}</th>
-                                    <th>{{ __('Email') }}</th>
+                                    <th>{{ __('Vehicle') }}</th>
+                                    <th>{{ __('Seatings') }}</th>
+                                    <th>{{ __('Category') }}</th>
+                                    <th>{{ __('Km allowed') }}</th>
+                                    <th>{{ __('Rate') }}</th>
                                     <th>{{ __('Status') }}</th>
                                     <th class="nosort">Action</th>
                                 </tr>
@@ -96,7 +97,7 @@
                     "pagingType": "full_numbers",
                     "dom": "<'row'<'col-sm-12 col-md-12 right'B>><'row'<'col-sm-12'tr>><'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
                     ajax: {
-                        "url": '{{route("admin.agents.index")}}',
+                        "url": '{{route("admin.vehicles.index")}}',
                         "data": function(d) {
                             var searchprams = $('#filterfordatatable').serializeArray();
                             var indexed_array = {};
@@ -112,20 +113,32 @@
                             name: 'name'
                         },
                         {
-                            data: 'company_name',
-                            name: 'company_name'
+                            data: 'vehicle_name',
+                            name: 'vehicle_name'
                         },
                         {
-                            data: 'state',
-                            name: 'state'
+                            data: 'seating_capacity',
+                            name: 'seating_capacity'
                         },
                         {
-                            data: 'contact',
-                            name: 'contact'
+                            data: 'category',
+                            name: 'category'
                         },
                         {
-                            data: 'email',
-                            name: 'email'
+                            data: 'kms_allowed',
+                            name: 'kms_allowed'
+                        },
+                        {
+                            data: 'rate',
+                            name: 'rate',
+                            render: function(data) {
+                                if (data) {
+                                    return "₹ " + data;
+                                }else{
+                                    return null;
+                                }
+                                
+                            }
                         },
                         {
                             data: 'status',
@@ -160,7 +173,7 @@
             drawTable();
 
             function editData(id){
-                var url="{{route('admin.agents.edit','ID')}}";
+                var url="{{route('admin.vehicles.edit','ID')}}";
                 url=url.replace('ID',id);
                 window.location.href=url;
             }
@@ -175,7 +188,7 @@
                 dangerMode: true,
                 }).then((result) => {
                     if (result) {
-                        var url="{{route('admin.agents.destroy','ID')}}";
+                        var url="{{route('admin.vehicles.destroy','ID')}}";
                         url=url.replace('ID',id);
                         $.ajax({
                             url: url,
@@ -198,8 +211,14 @@
             }
 
             $('#add-new').click(function(){
-                window.location.href="{{route('admin.agents.create')}}";
+                window.location.href="{{route('admin.vehicles.create')}}";
             });
+
+            function gotoAddons(id){
+                var url="{{route('admin.vehicles.addons.index','ID')}}";
+                url=url.replace('ID',id);
+                window.location.href=url;
+            }
 
         </script>
     @endsection
