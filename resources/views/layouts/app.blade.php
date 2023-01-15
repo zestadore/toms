@@ -4,7 +4,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   @yield('title')
-
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome Icons -->
@@ -236,6 +235,30 @@
                   </li>
                   <li class="nav-item">
                     <a href="{{route('admin.vehicles.create')}}" class="nav-link {{ (request()->is('admin/vehicles/create'))? 'active' : '' }}">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Create</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-header">OPERATIONS</li>
+              <li class="nav-item {{ (request()->is('operations/quotations*'))? 'menu-open' : '' }}">
+                <a href="#" class="nav-link {{ (request()->is('operations/quotations*'))? 'active' : '' }}">
+                  <i class="nav-icon fas fa-wallet"></i>
+                  <p>
+                    Leads / Quotations
+                    <i class="right fas fa-angle-left"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="{{route('operations.quotations.index')}}" class="nav-link {{ (request()->is('operations/quotations'))? 'active' : '' }}">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>List</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{route('operations.quotations.create')}}" class="nav-link {{ (request()->is('operations/quotations/create'))? 'active' : '' }}">
                       <i class="far fa-circle nav-icon"></i>
                       <p>Create</p>
                     </a>
