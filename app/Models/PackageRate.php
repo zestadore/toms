@@ -6,12 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Auth;
+use App\Models\RoomCategory;
 
 class PackageRate extends Model
 {
     use HasFactory,SoftDeletes;
     protected $table = 'package_rates';
     protected $guarded=[];
+    protected $appends=['room_name'];
 
     protected $casts = [
         'days' => 'array'
@@ -19,6 +21,13 @@ class PackageRate extends Model
 
     public function getIdAttribute(){
         return Crypt::encrypt($this->attributes['id']);
+    }
+
+    public function getRoomNameAttribute(){
+        $roomCategory=$this->attributes['room_category_id'];
+        $room=RoomCategory::find($roomCategory);
+        return $room->room_category;
+
     }
 
     public static function boot()

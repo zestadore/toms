@@ -45,11 +45,12 @@
                     <div class="card-header">
                       <h3 class="card-title">
                         <i class="fas fa-wallet"></i>
-                        Create quotation
+                        Create revision
                       </h3>
                     </div>
                     <div class="card-body">
-                        <form action="{{route('operations.quotations.store')}}" method="post" id="addNewForm">@csrf
+                        <form action="{{route('operations.quote-revisions.save')}}" method="post" id="addNewForm">@csrf
+                            <input type="hidden" name="quote_id" id="quote_id" value="{{$quote_id}}">
                             <div class="row">
                                 <div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">
                                     <x-forms.input class="form-control {{ $errors->has('arrival_date') ? ' is-invalid' : '' }}" title="Arrival" name="arrival_date" id="arrival_date" type="date" required="True"/>
@@ -94,18 +95,15 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-lg-4 col-sm-4 col-md-12 col-xs-12">
-                                    <x-forms.input class="form-control {{ $errors->has('ex_adults_wout') ? ' is-invalid' : '' }}" title="Ex adults(W/Out bed)" name="ex_adults_wout" id="ex_adults_wout" type="number" required="True"/>
-                                </div>
-                                <div class="col-lg-4 col-sm-4 col-md-12 col-xs-12">
+                                <div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">
                                     <x-forms.input class="form-control {{ $errors->has('ex_bed_children') ? ' is-invalid' : '' }}" title="Ex bed(Children)" name="ex_bed_children" id="ex_bed_children" type="number" required="True"/>
                                 </div>
-                                <div class="col-lg-4 col-sm-4 col-md-12 col-xs-12">
+                                <div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">
                                     <x-forms.input class="form-control {{ $errors->has('ex_children_wout') ? ' is-invalid' : '' }}" title="Ex children(W/Out bed)" name="ex_children_wout" id="ex_children_wout" type="number" required="True"/>
                                 </div>
                             </div>
                             <x-forms.input class="form-control {{ $errors->has('note') ? ' is-invalid' : '' }}" title="Note" name="note" id="note" type="textarea" required="False"/>
-                            <button type="submit" class="btn btn-info" style="float:right;">Save</button>
+                            <button type="button" class="btn btn-info" style="float:right;" id="submitForm">Next</button>
                         </form>
                     </div>
                     <!-- /.card-body -->
@@ -120,7 +118,10 @@
         <!-- date-range-picker -->
         <script src="{{asset('assets/admin/plugins/moment/moment.min.js')}}"></script>
         <script src="{{asset('assets/admin/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js')}}"></script>
+        <!-- Toastr -->
+        <script src="{{asset('assets/admin/plugins/toastr/toastr.min.js')}}"></script>
         <script>
+            
             $(function () {
                 $('#addNewForm').validate({
                     rules: {
@@ -156,5 +157,31 @@
             $('#arrival_date').datetimepicker({
                 format: 'L'
             });
+
+            function resetForm(){
+                $('#adults').val(0);
+                $('#kids').val(0);
+                $('#sgl_rooms').val(0);
+                $('#dbl_rooms').val(0);
+                $('#ex_bed_adults').val(0);
+                $('#ex_adults_wout').val(0);
+                $('#ex_bed_children').val(0);
+                $('#ex_children_wout').val(0);
+            }
+
+            resetForm();
+
+            $('#submitForm').click(function(){
+                var sgl=parseInt($('#sgl_rooms').val());
+                var dbl=parseInt($('#dbl_rooms').val());
+                var tot=sgl+dbl;
+                if(tot>0){
+                    $('#addNewForm').submit();
+                }else{
+                    toastr.error('Kindly check the number of rooms.')
+                }
+                // $('#addNewForm').submit();
+            });
+
         </script>
     @endsection

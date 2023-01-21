@@ -8,5 +8,11 @@ Route::middleware(['auth'])->name('operations.')->prefix('operations')->group(fu
 	Route::namespace("App\Http\Controllers\Operations\Quotations")->group(function () {
         Route::resource('quotations', QuotationController::class);
         Route::get('create-quote-revision/{quote_id}', [App\Http\Controllers\Operations\Quotations\QuotationController::class, 'createQuoteRevision'])->name('quote-revisions.create');
+        Route::post('save-quote-revision', [App\Http\Controllers\Operations\Quotations\QuotationController::class, 'saveQuoteRevison'])->name('quote-revisions.save');
+        Route::get('revision-calculation/{rev_id}', [App\Http\Controllers\Operations\Quotations\QuotationController::class, 'revisionCalculation'])->name('revision.calculation');
+        Route::get('get-hotels-with-destination/{destination_id}', [App\Http\Controllers\Operations\Quotations\RateController::class, 'getHotelList'])->name('hotels.list');
+        Route::get('get-packages-with-hotel/{hotel_id}/{date}', [App\Http\Controllers\Operations\Quotations\RateController::class, 'getPackageList'])->name('packages.list');
+        Route::get('get-rooms-with-hotel/{hotel_id}', [App\Http\Controllers\Operations\Quotations\RateController::class, 'getRoomCategories'])->name('rooms.list');
+        Route::get('get-rates-with-room/{room_id}/{package_id}/{date}', [App\Http\Controllers\Operations\Quotations\RateController::class, 'getRatesWithRoom'])->name('rates.list');
     });
 });

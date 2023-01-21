@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('quote_revisions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('quotation_id');
-            $table->string('rev_id',15)->unique();
+            $table->string('rev_id',15);
             $table->date('arrival_date');
             $table->integer('no_nights');
             $table->integer('adults');
@@ -25,13 +25,11 @@ return new class extends Migration
             $table->integer('sgl_rooms')->default(0);
             $table->integer('dbl_rooms')->default(0);
             $table->integer('ex_bed_adults')->default(0);
-            $table->integer('ex_adults_wout')->default(0);
             $table->integer('ex_bed_children')->default(0);
             $table->integer('ex_children_wout')->default(0);
             $table->double('tot_sgl')->default(0);
             $table->double('tot_dbl')->default(0);
             $table->double('tot_ex_bed_adt')->default(0);
-            $table->double('tot_ex_adt_wout')->default(0);
             $table->double('tot_bed_chd')->default(0);
             $table->double('tot_chd_wout')->default(0);
             $table->integer('allowed_kms')->default(0);
