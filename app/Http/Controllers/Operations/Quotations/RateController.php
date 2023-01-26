@@ -7,6 +7,7 @@ use App\Models\DatePlan;
 use App\Models\Package;
 use App\Models\PackageRate;
 use App\Models\RoomCategory;
+use App\Models\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
@@ -50,5 +51,19 @@ class RateController extends Controller
             }
         }
         return response()->json($packageRate);
+    }
+
+    public function getVehicleRate($total_km,$days,$vehicle_id)
+    {
+        $vehicle=Vehicle::find(Crypt::decrypt($vehicle_id));
+        $kms=$vehicle->kms_allowed*$days;
+        $exKms=$total_km-$kms;
+        $exKmsRate=0;
+        if($exKms>0){
+            $exKmsRate=$exKms*$vehicle->add_km_rate;
+        }
+        $rate=$vehicle->rate*$days;
+        $rate+=$exKmsRate;
+        return response()->json($rate);
     }
 }

@@ -7,6 +7,7 @@ use App\Models\QuoteRevision;
 use App\Models\Agent;
 use App\Models\User;
 use App\Models\Destination;
+use App\Models\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use DataTables;
@@ -130,10 +131,18 @@ class QuotationController extends Controller
 
     public function revisionCalculation($rev_id)
     {
-        $revison=QuoteRevision::find(Crypt::decrypt($rev_id));
-        $quote_id=Crypt::encrypt($revison->quote_id);
+        $revison=QuoteRevision::join('quotations','quote_revisions.quotation_id','quotations.id')
+            ->join('agents','agents.id','quotations.agent_id')
+            ->select('quote_revisions.*','quotations.*','agents.company_name')->find(Crypt::decrypt($rev_id));
+        $quote_id=Crypt::encrypt($revison->quotation_id);
         $destinations=Destination::where('status',1)->get();
-        return view('application.quotations.revisions.calculate_revision',['revision'=>$revison,'quote_id'=>$quote_id,'destinations'=>$destinations]);
+        $vehicle=Vehicle::where('status',1)->get();
+        return view('application.quotations.revisions.calculate_revision',['revision'=>$revison,'quote_id'=>$quote_id,'destinations'=>$destinations,'vehicles'=>$vehicle]);
+    }
+
+    public function saveQuoteRevisonDetails(Request $request)
+    {
+        dd($request);
     }
 
     public function edit(Quotation $quotation)

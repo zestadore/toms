@@ -43,7 +43,7 @@
                 <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
                     <div class="form-group">
                         <label for="meal_plan">Meal plan</label>
-                        <select name="meal_plan[]" id="meal_plan" data-key="{{$key}}" class="form-control">
+                        <select name="meal_plan[]" id="meal_plan" data-key="{{$key}}" data-date="{{$checkInDate}}" class="form-control meal_plan">
                             <option value="CP">CP</option>
                             <option value="EP">EP</option>
                             <option value="MAP">MAP</option>
@@ -54,9 +54,12 @@
             </div><br>
         </span>
         <span class="info-box-number">
-            <div class="row" style="width: 25%">
-                <div class="col">
+            <div class="row" style="width: 100%">
+                <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
                     {{Carbon::parse($checkInDate)->format('d-M-Y')}}
+                </div>
+                <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                    <span id="directRates{{$key}}"></span>
                 </div>
             </div>
         </span>

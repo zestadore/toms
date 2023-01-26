@@ -30,4 +30,8 @@ class QuoteRevision extends Model
             $model->updated_by = Auth::user()->id;
         });
     }
+
+    public function quotation(){
+        return $this->hasOne(Quotation::class, 'id', 'quotation_id');
+    }
 }
