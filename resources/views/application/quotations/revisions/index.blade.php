@@ -210,5 +210,11 @@
                 window.location.href=url;
             });
 
+            function gotoCalculations(id){
+                var url="{{route('operations.revision.calculation','ID')}}";
+                url=url.replace('ID',id);
+                window.location.href=url;
+            }
+
         </script>
     @endsection

@@ -8,6 +8,7 @@ use App\Models\Agent;
 use App\Models\User;
 use App\Models\Destination;
 use App\Models\Vehicle;
+use App\Models\QuoteRevisionDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use DataTables;
@@ -89,7 +90,7 @@ class QuotationController extends Controller
             }
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->addColumn('action', 'application.quotations.action')
+                ->addColumn('action', 'application.quotations.revisions.action')
                 ->escapeColumns('aaData')
                 ->make(true);
         }
@@ -142,7 +143,55 @@ class QuotationController extends Controller
 
     public function saveQuoteRevisonDetails(Request $request)
     {
-        dd($request);
+        $details=json_decode($request->details);
+        $accomodationRate=json_decode($request->acomodation_rate);
+        $transportationRate=json_decode($request->transportation_rate);
+        $netRate=json_decode($request->net_rate);
+        // dd($netRate);
+        $detArray=[];
+        foreach($details as $detail){
+            $detArray[]=[
+                'revision_id'=>Crypt::decrypt($netRate[0]->revision_id),
+                'destination_id'=>Crypt::decrypt($detail->destination),
+                'hotel_id'=>Crypt::decrypt($detail->hotel),
+                'room_category_id'=>Crypt::decrypt($detail->room),
+                'checkin'=>Carbon::parse($detail->checkin)->format('Y-m-d'),
+                'single'=>$detail->sgl_rooms,
+                'double'=>$detail->dbl_rooms,
+                'extra_adult'=>$detail->ex_beds,
+                'extra_child_bed'=>$detail->ex_bed_children,
+                'extra_child_wout_bed'=>$detail->ex_wouts,
+                'created_at'=>Now(),
+                'created_by'=>Auth::user()->id
+            ];
+        }
+        QuoteRevisionDetail::insert($detArray);
+        $data=[
+            'tot_sgl'=>$accomodationRate[0]->gross_sgl,
+            'tot_dbl'=>$accomodationRate[0]->gross_dbl,
+            'tot_ex_bed_adt'=>$accomodationRate[0]->gross_ex_bed,
+            'tot_bed_chd'=>$accomodationRate[0]->gross_ex_chd_bed,
+            'tot_chd_wout'=>$accomodationRate[0]->gross_wout,
+            'allowed_kms'=>$transportationRate[0]->total_kms,
+            'vehicle_rate'=>$transportationRate[0]->gross_vehicle_rate,
+            'hotel_addons'=>0,
+            'vehicle_addons'=>0,
+            'grand_total'=>$netRate[0]->accomodation_cost+$netRate[0]->transportation_cost,
+            'discount_type'=>$netRate[0]->discount_type,
+            'discount'=>$netRate[0]->discount,
+            'discount_amount'=>$netRate[0]->discount_amount,
+            'markup_type'=>$netRate[0]->markup_type,
+            'markup'=>$netRate[0]->markup,
+            'markup_amount'=>$netRate[0]->markup_amount,
+            'gst'=>5,
+            'gst_amount'=>$netRate[0]->gst_amount,
+            'net_rate'=>$netRate[0]->total_net_rate
+        ];
+        $revision=QuoteRevision::find(Crypt::decrypt($netRate[0]->revision_id));
+        $res=$revision->update($data);
+        if($res){
+            return response()->json('success');
+        }
     }
 
     public function edit(Quotation $quotation)

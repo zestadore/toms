@@ -10,6 +10,7 @@
         <link rel="stylesheet" href="{{asset('assets/admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
         <link rel="stylesheet" href="{{asset('assets/admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css')}}">
         <link rel="stylesheet" href="{{asset('assets/admin/plugins/toastr/toastr.min.css')}}">
+        <meta name="csrf_token" content="{{ csrf_token() }}" />
     @endsection
     @section('breadcrump')
         <div class="col-sm-6">
@@ -507,7 +508,7 @@
             }
 
             $('#save-revision').click(function(){
-                var destinations=document.getElementsByName('destinations[]');
+                var destinations = document.getElementsByName('destinations[]');
                 var hotels=document.getElementsByName('hotels[]');
                 var rooms=document.getElementsByName('rooms[]');
                 var meals=document.getElementsByName('meal_plan[]');
@@ -516,20 +517,66 @@
                 var ex_beds=document.getElementsByName('ex_bed_adult[]');
                 var ex_bed_children=document.getElementsByName('ex_bed_child[]');
                 var ex_wouts=document.getElementsByName('ex_child_wout[]');
+                var destArray=[];
+                for(i=0;i<destinations.length;i++){
+                    destArray[i]=({
+                        'destination':destinations[i].value,
+                        'hotel':hotels[i].value,
+                        'room':rooms[i].value,
+                        'meals':meals[i].value,
+                        'sgl_rooms':sgl_rooms[i].value,
+                        'dbl_rooms':dbl_rooms[i].value,
+                        'ex_beds':ex_beds[i].value,
+                        'ex_bed_children':ex_bed_children[i].value,
+                        'ex_wouts':ex_wouts[i].value,
+                        'checkin':destinations[i].getAttribute("data-date")
+                    });
+                }
+                details=JSON.stringify(destArray);
+                destArray=[];
+                destArray=[{
+                    'gross_sgl':$('#gross_sgl').val(),
+                    'gross_dbl':$('#gross_dbl').val(),
+                    'gross_ex_bed':$('#gross_ex_bed').val(),
+                    'gross_ex_chd_bed':$('#gross_ex_chd_bed').val(),
+                    'gross_wout':$('#gross_wout').val()
+                }];
+                var accomodationRate=JSON.stringify(destArray);
+                destArray=[];
+                destArray=[{
+                    'total_kms':$('#total_kms').val(),
+                    'no_days':$('#no_days').val(),
+                    'vehicle_id':$('#vehicle_id').val(),
+                    'gross_vehicle_rate':$('#gross_vehicle_rate').val(),
+                }];
+                var transportationRate=JSON.stringify(destArray);
+                destArray=[];
+                destArray=[{
+                    'accomodation_cost':$('#accomodation_cost').val(),
+                    'transportation_cost':$('#transportation_cost').val(),
+                    'discount_type':$('#discount_type').val(),
+                    'discount':$('#discount').val(),
+                    'discount_amount':$('#discount_amount').val(),
+                    'markup_type':$('#markup_type').val(),
+                    'markup':$('#markup').val(),
+                    'markup_amount':$('#markup_amount').val(),
+                    'gst_amount':$('#gst_amount').val(),
+                    'total_net_rate':$('#total_net_rate').val(),
+                    'revision_id':'{{$revision->id}}'
+                }];
+                var netRate=JSON.stringify(destArray);
+                var formData = new FormData();
+                formData.append('details', details);
+                formData.append('acomodation_rate', accomodationRate);
+                formData.append('transportation_rate', transportationRate);
+                formData.append('net_rate', netRate);
                 $.ajax({
                     url: '{{route("operations.quote-revisions-details.save")}}',
                     type:"post",
-                    data:{
-                        destinations:destinations,
-                        hotels:hotels,
-                        rooms:rooms,
-                        meals:meals,
-                        sgl_rooms:sgl_rooms,
-                        dbl_rooms:dbl_rooms,
-                        ex_beds:ex_beds,
-                        ex_bed_children:ex_bed_children,
-                        ex_wouts:ex_wouts,
-                    },
+                    "headers": {'X-CSRF-TOKEN': $('meta[name="csrf_token"]').attr('content')},
+                    contentType: false, 
+                    processData: false,
+                    data:formData,
                     success:function(response){
                         // $('#gross_vehicle_rate').val(response);
                     },
