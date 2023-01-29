@@ -241,6 +241,29 @@
                   </li>
                 </ul>
               </li>
+              <li class="nav-item {{ (request()->is('admin/quotation-notes*'))? 'menu-open' : '' }}">
+                <a href="#" class="nav-link {{ (request()->is('admin/quotation-notes*'))? 'active' : '' }}">
+                  <i class="nav-icon fas fa-edit"></i>
+                  <p>
+                    Notes
+                    <i class="right fas fa-angle-left"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="{{route('admin.quotation-notes.index')}}" class="nav-link {{ (request()->is('admin/quotation-notes'))? 'active' : '' }}">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>List</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{route('admin.quotation-notes.create')}}" class="nav-link {{ (request()->is('admin/quotation-notes/create'))? 'active' : '' }}">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Create</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
               <li class="nav-header">OPERATIONS</li>
               <li class="nav-item {{ (request()->is('operations/quotations*'))? 'menu-open' : '' }}">
                 <a href="#" class="nav-link {{ (request()->is('operations/quotations*'))? 'active' : '' }}">

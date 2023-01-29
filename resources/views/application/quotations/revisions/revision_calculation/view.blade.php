@@ -107,6 +107,19 @@
                                 <td style="color:green;background:yellow;font-style:italic;">Net rate : &#x20b9; {{$revision->net_rate}}</td>
                             </tr>
                         </table>
+                        <hr>
+                        @foreach ($notes as $item)
+                            <table class="table table-bordered">
+                                <tr>
+                                    <td>{{$item->title}}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        {!!$item->description!!}
+                                    </td>
+                                </tr>
+                            </table>
+                        @endforeach
                     </div>
                     <!-- /.card-body -->
                   </div><br>
