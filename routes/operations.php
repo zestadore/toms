@@ -16,5 +16,6 @@ Route::middleware(['auth'])->name('operations.')->prefix('operations')->group(fu
         Route::get('get-rates-with-room/{room_id}/{package_id}/{date}', [App\Http\Controllers\Operations\Quotations\RateController::class, 'getRatesWithRoom'])->name('rates.list');
         Route::get('get-vehicle-rates/{total_km}/{days}/{vehicle_id}', [App\Http\Controllers\Operations\Quotations\RateController::class, 'getVehicleRate'])->name('vehicle-rate.get');
         Route::post('save-quote-details', [App\Http\Controllers\Operations\Quotations\QuotationController::class, 'saveQuoteRevisonDetails'])->name('quote-revisions-details.save');
+        Route::get('revision-calculation-view/{rev_id}', [App\Http\Controllers\Operations\Quotations\QuotationController::class, 'revisionCalculationView'])->name('revision.calculation.view');
     });
 });

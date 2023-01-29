@@ -216,5 +216,11 @@
                 window.location.href=url;
             }
 
+            function gotoViewRevision(id){
+                var url="{{route('operations.revision.calculation.view','ID')}}";
+                url=url.replace('ID',id);
+                window.location.href=url;
+            }
+
         </script>
     @endsection

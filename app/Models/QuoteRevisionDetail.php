@@ -30,5 +30,17 @@ class QuoteRevisionDetail extends Model
             $model->updated_by = Auth::user()->id;
         });
     }
+    
+    public function destination(){
+        return $this->hasOne(Destination::class, 'id', 'destination_id');
+    }
+
+    public function hotel(){
+        return $this->hasOne(Hotel::class, 'id', 'hotel_id');
+    }
+
+    public function roomCategory(){
+        return $this->hasOne(RoomCategory::class, 'id', 'room_category_id');
+    }
 
 }

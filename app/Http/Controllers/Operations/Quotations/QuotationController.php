@@ -173,6 +173,7 @@ class QuotationController extends Controller
             'tot_bed_chd'=>$accomodationRate[0]->gross_ex_chd_bed,
             'tot_chd_wout'=>$accomodationRate[0]->gross_wout,
             'allowed_kms'=>$transportationRate[0]->total_kms,
+            'vehicle_id'=>$transportationRate[0]->vehicle_id,
             'vehicle_rate'=>$transportationRate[0]->gross_vehicle_rate,
             'hotel_addons'=>0,
             'vehicle_addons'=>0,
@@ -192,6 +193,17 @@ class QuotationController extends Controller
         if($res){
             return response()->json('success');
         }
+    }
+
+    public function revisionCalculationView($rev_id)
+    {
+        $revison=QuoteRevision::join('quotations','quote_revisions.quotation_id','quotations.id')
+            ->join('agents','agents.id','quotations.agent_id')
+            ->select('quote_revisions.*','quotations.*','agents.company_name')->find(Crypt::decrypt($rev_id));
+        $quote_id=Crypt::encrypt($revison->quotation_id);
+        $destinations=Destination::where('status',1)->get();
+        $vehicle=Vehicle::where('status',1)->get();
+        return view('application.quotations.revisions.revision_calculation.view',['revision'=>$revison,'quote_id'=>$quote_id,'destinations'=>$destinations,'vehicles'=>$vehicle]);
     }
 
     public function edit(Quotation $quotation)
