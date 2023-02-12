@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="{{asset('assets/admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
         <link rel="stylesheet" href="{{asset('assets/admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css')}}">
         <link rel="stylesheet" href="{{asset('assets/admin/plugins/toastr/toastr.min.css')}}">
+        <link rel="stylesheet" href="{{asset('assets/admin/plugins/summernote/summernote-bs4.min.css')}}">
     @endsection
     @section('breadcrump')
         <div class="col-sm-6">
@@ -51,13 +52,13 @@
                         </button>
                     </div>
                     <div class="card-body">
-                        <form id="filterfordatatable" class="form-horizontal" onsubmit="event.preventDefault();">
+                        {{-- <form id="filterfordatatable" class="form-horizontal" onsubmit="event.preventDefault();">
                             <div class="row ">
                                 <div class="col">
                                     <input type="text" name="search" class="form-control" placeholder="Search with agent">
                                 </div>
                             </div>
-                        </form><br>
+                        </form><br> --}}
                         <table class="table table-bordered table-striped" id="item-table">
                             <thead>
                                 <tr>
@@ -76,6 +77,28 @@
                   </div><br>
             </div><!--/. container-fluid -->
         </section>
+        <div class="modal fade" id="modal-availability">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Availability</h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <x-forms.input class="form-control {{ $errors->has('primary_note') ? ' is-invalid' : '' }}" title="Note" name="primary_note" id="primary_note" type="textarea" required="False"/>
+                </div>
+                <div class="modal-footer justify-content-between">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary" id="askAvailability" data-id=0>Request availability</button>
+                </div>
+              </div>
+              <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+          <!-- /.modal -->
     @endsection
     @section('scripts')
         <script src="{{asset('assets/admin/plugins/datatables/jquery.dataTables.min.js')}}"></script>
@@ -85,6 +108,7 @@
         <script src="{{asset('assets/admin/plugins/datatables-buttons/js/dataTables.buttons.min.js')}}"></script>
         <script src="{{asset('assets/admin/plugins/datatables-buttons/js/buttons.bootstrap4.min.js')}}"></script>
         <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        <script src="{{asset('assets/admin/plugins/summernote/summernote-bs4.min.js')}}"></script>
         <script>
             function drawTable()
             {
@@ -140,6 +164,8 @@
                                     return "<span class='badge badge-warning'>Pending</span>";
                                 }else if(data ==2){
                                     return "<span class='badge badge-success'>Confirmed</span>";
+                                }else if(data ==4){
+                                    return "<span class='badge badge-warning'>Availability</span>";
                                 }else{
                                     return "<span class='badge badge-danger'>Cancelled</span>";
                                 }
@@ -221,6 +247,48 @@
                 url=url.replace('ID',id);
                 window.location.href=url;
             }
+
+            function askAvailability(id){
+                $('#askAvailability').attr('data-id',id);
+                $('#modal-availability').modal('show');
+            }
+
+            $('#askAvailability').click(function(){
+                var revision_id=$('#askAvailability').data('id');
+                var primary_note=$('#primary_note').val();
+                $.ajax({
+                    url: "{{route('operations.availability.ask')}}",
+                    type:"post",
+                    data:{
+                        "_token": "{{ csrf_token() }}",
+                        revision_id:revision_id,
+                        primary_note:primary_note
+                    },
+                    success:function(response){
+                        if(response.success){
+                            swal("Good job!", "Successfully requested for availability!", "success");
+                            drawTable();
+                        }else{
+                            swal("Oops!", response.error, "error");
+                        }
+                    },
+                });
+                $('#modal-availability').modal('hide');
+            });
+
+            $('#primary_note').summernote({
+                toolbar: [
+                    // [groupName, [list of button]]
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough', 'superscript', 'subscript']],
+                    ['fontsize', ['fontsize']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['height', ['height']],
+                    [ 'insert', [ 'link'] ],
+                    [ 'table', [ 'table' ] ],
+                ]
+            });
 
         </script>
     @endsection

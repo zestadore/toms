@@ -18,4 +18,8 @@ Route::middleware(['auth'])->name('operations.')->prefix('operations')->group(fu
         Route::post('save-quote-details', [App\Http\Controllers\Operations\Quotations\QuotationController::class, 'saveQuoteRevisonDetails'])->name('quote-revisions-details.save');
         Route::get('revision-calculation-view/{rev_id}', [App\Http\Controllers\Operations\Quotations\QuotationController::class, 'revisionCalculationView'])->name('revision.calculation.view');
     });
+    //Availability
+    Route::post('ask-availability', [App\Http\Controllers\Operations\AvailabilityController::class, 'askAvailability'])->name('availability.ask');
+    Route::post('report-availability', [App\Http\Controllers\Operations\AvailabilityController::class, 'reportAvailability'])->name('availability.report');
+    Route::resource('availabilities', App\Http\Controllers\Operations\AvailabilityController::class);
 });

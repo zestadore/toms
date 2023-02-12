@@ -83,12 +83,12 @@ class QuotationController extends Controller
     {
         if ($request->ajax()) {
             $data= QuoteRevision::query()->where('quotation_id',Crypt::decrypt($id));
-            $search = $request->search;
-            if ($search) {
-                $data->where(function ($query) use ($search) {
-                    $query->where('package_name', 'like', '%' . $search . '%');
-                });
-            }
+            // $search = $request->search;
+            // if ($search) {
+            //     $data->where(function ($query) use ($search) {
+            //         $query->where('package_name', 'like', '%' . $search . '%');
+            //     });
+            // }
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', 'application.quotations.revisions.action')
@@ -187,7 +187,8 @@ class QuotationController extends Controller
             'markup_amount'=>$netRate[0]->markup_amount,
             'gst'=>5,
             'gst_amount'=>$netRate[0]->gst_amount,
-            'net_rate'=>$netRate[0]->total_net_rate
+            'net_rate'=>$netRate[0]->total_net_rate,
+            'status'=>1,
         ];
         $revision=QuoteRevision::find(Crypt::decrypt($netRate[0]->revision_id));
         $res=$revision->update($data);

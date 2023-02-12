@@ -8,4 +8,8 @@
       Package
     @endif
   </label>
+  <label class="btn bg-olive">
+    <input type="radio" name="options" id="option_b1" autocomplete="off" checked="" onclick="askAvailability('{{$id}}')"> 
+      Request availability
+  </label>
 </div>

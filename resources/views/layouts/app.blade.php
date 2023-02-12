@@ -288,6 +288,14 @@
                   </li>
                 </ul>
               </li>
+              <li class="nav-item">
+                <a href="{{route('operations.availabilities.index')}}" class="nav-link {{ (request()->is('operations/availabilities*'))? 'active' : '' }}">
+                  <i class="nav-icon fas fa-plus-circle"></i>
+                  <p>
+                    Availability
+                  </p>
+                </a>
+              </li>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
@@ -319,7 +327,7 @@
 
   <!-- Main Footer -->
   <footer class="main-footer">
-    <strong>Copyright &copy; {{date('Y')}} <a href="https://adminlte.io">AdminLTE.io</a>.</strong>
+    <strong>Copyright &copy; {{date('Y')}} <a href="Javascript::void(0)">Travel Measure</a>.</strong>
     All rights reserved.
     <div class="float-right d-none d-sm-inline-block">
       <b>Crafted with <i class="fa fa-heart text-pulse" style="color:red;"></i> by <a href="https://zestadore.in" target="_blank">Zestadore IT Solutions</a></b>
