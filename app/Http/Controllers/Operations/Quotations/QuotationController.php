@@ -139,7 +139,7 @@ class QuotationController extends Controller
         $quote_id=Crypt::encrypt($revison->quotation_id);
         $destinations=Destination::where('status',1)->get();
         $vehicle=Vehicle::where('status',1)->get();
-        return view('application.quotations.revisions.calculate_revision',['revision'=>$revison,'quote_id'=>$quote_id,'destinations'=>$destinations,'vehicles'=>$vehicle]);
+        return view('application.quotations.revisions.calculate_revision',['revision'=>$revison,'quote_id'=>$quote_id,'destinations'=>$destinations,'vehicles'=>$vehicle,'revisionId'=>$rev_id]);
     }
 
     public function saveQuoteRevisonDetails(Request $request)
@@ -174,7 +174,7 @@ class QuotationController extends Controller
             'tot_bed_chd'=>$accomodationRate[0]->gross_ex_chd_bed,
             'tot_chd_wout'=>$accomodationRate[0]->gross_wout,
             'allowed_kms'=>$transportationRate[0]->total_kms,
-            'vehicle_id'=>$transportationRate[0]->vehicle_id,
+            'vehicle_id'=>Crypt::decrypt($transportationRate[0]->vehicle_id),
             'vehicle_rate'=>$transportationRate[0]->gross_vehicle_rate,
             'hotel_addons'=>0,
             'vehicle_addons'=>0,
@@ -193,7 +193,7 @@ class QuotationController extends Controller
         $revision=QuoteRevision::find(Crypt::decrypt($netRate[0]->revision_id));
         $res=$revision->update($data);
         if($res){
-            return response()->json('success');
+            return response()->json(['success'=>'Success']);
         }
     }
 
@@ -207,6 +207,22 @@ class QuotationController extends Controller
         $vehicle=Vehicle::where('status',1)->get();
         $notes=QuotationNote::where('status',1)->get();
         return view('application.quotations.revisions.revision_calculation.view',['revision'=>$revison,'quote_id'=>$quote_id,'destinations'=>$destinations,'vehicles'=>$vehicle,'notes'=>$notes]);
+    }
+
+    public function copyRevision($id)
+    {
+        $id=Crypt::decrypt($id);
+        $revision=QuoteRevision::find($id);
+        $revId=QuoteRevision::where('quotation_id',$revision->quotation_id)->count();
+        $revId+=1;
+        $copy=$revision->replicate(['tot_sgl', 'tot_dbl','tot_ex_bed_adt','tot_bed_chd','tot_chd_wout','allowed_kms','vehicle_id','vehicle_rate','hotel_addons','vehicle_addons','grand_total','discount_type',
+            'discount','discount_amount','markup_type','markup','markup_amount','gst','gst_amount','net_rate','note']);
+        $copy->rev_id=$revId;
+        $copy->status=0;
+        $res=$copy->save();
+        if($res){
+            return response()->json(['success'=>'Success']);
+        }
     }
 
     public function edit(Quotation $quotation)

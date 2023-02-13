@@ -17,6 +17,7 @@ Route::middleware(['auth'])->name('operations.')->prefix('operations')->group(fu
         Route::get('get-vehicle-rates/{total_km}/{days}/{vehicle_id}', [App\Http\Controllers\Operations\Quotations\RateController::class, 'getVehicleRate'])->name('vehicle-rate.get');
         Route::post('save-quote-details', [App\Http\Controllers\Operations\Quotations\QuotationController::class, 'saveQuoteRevisonDetails'])->name('quote-revisions-details.save');
         Route::get('revision-calculation-view/{rev_id}', [App\Http\Controllers\Operations\Quotations\QuotationController::class, 'revisionCalculationView'])->name('revision.calculation.view');
+        Route::post('copy-revision/{rev_id}', [App\Http\Controllers\Operations\Quotations\QuotationController::class, 'copyRevision'])->name('revision.copy');
     });
     //Availability
     Route::post('ask-availability', [App\Http\Controllers\Operations\AvailabilityController::class, 'askAvailability'])->name('availability.ask');

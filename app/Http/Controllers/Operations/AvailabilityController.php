@@ -14,7 +14,7 @@ class AvailabilityController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data= Availability::query()->join('quote_revisions','availabilities.quote_revision_id','quote_revisions.id')->join('quotations','quote_revisions.quotation_id','quotations.id')-> select(['availabilities.*','quotations.*','quote_revisions.rev_id']);
+            $data= Availability::query()->join('quote_revisions','availabilities.quote_revision_id','quote_revisions.id')->join('quotations','quote_revisions.quotation_id','quotations.id')-> select(['availabilities.*','quotations.*','quote_revisions.rev_id','availabilities.id as availability_id']);
             $status = $request->status_search;
             if ($status!=null) {
                 $data->where(function ($query) use ($status) {

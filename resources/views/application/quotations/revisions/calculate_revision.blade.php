@@ -562,7 +562,7 @@
                     'markup_amount':$('#markup_amount').val(),
                     'gst_amount':$('#gst_amount').val(),
                     'total_net_rate':$('#total_net_rate').val(),
-                    'revision_id':'{{$revision->id}}'
+                    'revision_id':'{{$revisionId}}'
                 }];
                 var netRate=JSON.stringify(destArray);
                 var formData = new FormData();
@@ -578,6 +578,10 @@
                     processData: false,
                     data:formData,
                     success:function(response){
+                        if(response.success){
+                            var url="{{route('operations.quotations.show',$quote_id)}}";
+                            window.location.href=url;
+                        }
                         // $('#gross_vehicle_rate').val(response);
                     },
                 });

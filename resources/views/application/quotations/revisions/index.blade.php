@@ -8,6 +8,16 @@
         <link rel="stylesheet" href="{{asset('assets/admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css')}}">
         <link rel="stylesheet" href="{{asset('assets/admin/plugins/toastr/toastr.min.css')}}">
         <link rel="stylesheet" href="{{asset('assets/admin/plugins/summernote/summernote-bs4.min.css')}}">
+        <style>
+            #statusAvailability {
+                margin: 4px, 4px;
+                padding: 4px;
+                width: 750px;
+                overflow-x: auto;
+                overflow-y: hidden;
+                white-space: nowrap;
+            }
+        </style>
     @endsection
     @section('breadcrump')
         <div class="col-sm-6">
@@ -92,6 +102,27 @@
                 <div class="modal-footer justify-content-between">
                   <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                   <button type="button" class="btn btn-primary" id="askAvailability" data-id=0>Request availability</button>
+                </div>
+              </div>
+              <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+          <!-- /.modal -->
+          <div class="modal fade" id="availability-status">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Availability</h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <div id="statusAvailability"></div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
               </div>
               <!-- /.modal-content -->
@@ -275,6 +306,42 @@
                 });
                 $('#modal-availability').modal('hide');
             });
+
+            function copyRevision(id){
+                swal({
+                    title: 'Copying?',
+                    text: "Do you want a copy of this revision?",
+                    icon: 'warning',
+                    buttons: true,
+                    dangerMode: true,
+                }).then((result) => {
+                    if (result) {
+                        var url="{{route('operations.revision.copy','ID')}}";
+                        url=url.replace('ID',id);
+                        $.ajax({
+                            url: url,
+                            type:"post",
+                            data:{
+                                "_token": "{{ csrf_token() }}",
+                            },
+                            success:function(response){
+                                console.log(response);
+                                if(response.success){
+                                    swal("Good job!", "You have created a copy of the revision!", "success");
+                                    drawTable();
+                                }else{
+                                    swal("Oops!", "Failed to copy the revision!", "danger");
+                                }
+                            },
+                        });
+                    }
+                })
+            }
+
+            function availabilityStatus(result){
+                $('#statusAvailability').html(result);
+                $('#availability-status').modal('show');
+            }
 
             $('#primary_note').summernote({
                 toolbar: [
