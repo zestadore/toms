@@ -23,4 +23,6 @@ Route::middleware(['auth'])->name('operations.')->prefix('operations')->group(fu
     Route::post('ask-availability', [App\Http\Controllers\Operations\AvailabilityController::class, 'askAvailability'])->name('availability.ask');
     Route::post('report-availability', [App\Http\Controllers\Operations\AvailabilityController::class, 'reportAvailability'])->name('availability.report');
     Route::resource('availabilities', App\Http\Controllers\Operations\AvailabilityController::class);
+    //Booking
+    Route::post('create-booking/{rev_id}', [App\Http\Controllers\Operations\Quotations\QuotationController::class, 'createBooking'])->name('booking.create');
 });

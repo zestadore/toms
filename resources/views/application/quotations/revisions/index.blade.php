@@ -123,6 +123,7 @@
                 </div>
                 <div class="modal-footer justify-content-between">
                   <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-info" style="float:right;" id="booking" data-id=0>Proceed for Booking</button>
                 </div>
               </div>
               <!-- /.modal-content -->
@@ -338,8 +339,9 @@
                 })
             }
 
-            function availabilityStatus(result){
+            function availabilityStatus(result,id){
                 $('#statusAvailability').html(result);
+                $('#booking').attr('data-id',id);
                 $('#availability-status').modal('show');
             }
 
@@ -355,6 +357,38 @@
                     [ 'insert', [ 'link'] ],
                     [ 'table', [ 'table' ] ],
                 ]
+            });
+
+            $('#booking').click(function(){
+                swal({
+                    title: 'Booking?',
+                    text: "Kindly proceed the booking only after cross check the availability twice?",
+                    icon: 'warning',
+                    buttons: true,
+                    dangerMode: true,
+                }).then((result) => {
+                    if (result) {
+                        var revision_id=$('#booking').data('id');
+                        var url="{{route('operations.booking.create','ID')}}";
+                        url=url.replace('ID',revision_id);
+                        $.ajax({
+                            url: url,
+                            type:"post",
+                            data:{
+                                "_token": "{{ csrf_token() }}",
+                            },
+                            success:function(response){
+                                if(response.success){
+                                    swal("Good job!", "You have created booking for the revision!", "success");
+                                    $('#availability-status').modal('hide');
+                                    drawTable();
+                                }else{
+                                    swal("Oops!", response.error, "error");
+                                }
+                            },
+                        });
+                    }
+                })
             });
 
         </script>

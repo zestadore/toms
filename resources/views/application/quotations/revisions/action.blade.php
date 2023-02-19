@@ -14,7 +14,7 @@
   </label>
   <label class="btn bg-olive">
     @if(getAvailabilityStatus($id))
-      <input type="radio" name="options" id="option_b1" autocomplete="off" checked="" onclick="availabilityStatus('{{getAvailabilityResult($id)}}')"> 
+      <input type="radio" name="options" id="option_b1" autocomplete="off" checked="" onclick="availabilityStatus('{{getAvailabilityResult($id)}}','{{$id}}')"> 
       Availability status
     @else
       <input type="radio" name="options" id="option_b1" autocomplete="off" checked="" onclick="askAvailability('{{$id}}')"> 

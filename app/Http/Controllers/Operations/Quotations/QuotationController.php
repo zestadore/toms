@@ -10,6 +10,8 @@ use App\Models\Destination;
 use App\Models\Vehicle;
 use App\Models\QuoteRevisionDetail;
 use App\Models\QuotationNote;
+use App\Models\Booking;
+use App\Models\BookingDetails;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use DataTables;
@@ -221,6 +223,38 @@ class QuotationController extends Controller
         $copy->status=0;
         $res=$copy->save();
         if($res){
+            return response()->json(['success'=>'Success']);
+        }
+    }
+
+    public function createBooking($id)
+    {
+        $id=Crypt::decrypt($id);
+        $booking=Booking::where('quote_revision_id',$id)->first();
+        if($booking){
+            return response()->json(['error'=>'You have already created booking for this revision']);
+        }
+        $revision=QuoteRevision::find($id);
+        $data=[
+            'quotaion_id'=>$revision->quotation_id,
+            'quote_revision_id'=>$id,
+        ];
+        $booking=Booking::create($data)->id;
+        if($booking){
+            $details=QuoteRevisionDetail::where('revision_id',$id)->get();
+            $data=[];
+            foreach($details as $detail){
+                $data[]=[
+                    'booking_id'=>Crypt::decrypt($booking),
+                    'quote_revision_details_id'=>Crypt::decrypt($detail->id),
+                    'created_by'=>Auth::user()->id,
+                    'updated_by'=>Auth::user()->id,
+                    'created_at'=>Now()
+                ];
+            }
+            if(count($data)>0){
+                BookingDetails::insert($data);
+            }
             return response()->json(['success'=>'Success']);
         }
     }
