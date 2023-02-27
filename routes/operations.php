@@ -25,4 +25,7 @@ Route::middleware(['auth'])->name('operations.')->prefix('operations')->group(fu
     Route::resource('availabilities', App\Http\Controllers\Operations\AvailabilityController::class);
     //Booking
     Route::post('create-booking/{rev_id}', [App\Http\Controllers\Operations\Quotations\QuotationController::class, 'createBooking'])->name('booking.create');
+    Route::get('bookings', [App\Http\Controllers\Operations\BookingController::class, 'index'])->name('bookings.index');
+    Route::get('bookings/{id}', [App\Http\Controllers\Operations\BookingController::class, 'show'])->name('bookings.show');
+    Route::post('forward-bookings/{rev_id}', [App\Http\Controllers\Operations\BookingController::class, 'forwardBookings'])->name('booking.forward');
 });

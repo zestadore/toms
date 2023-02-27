@@ -296,6 +296,14 @@
                   </p>
                 </a>
               </li>
+              <li class="nav-item">
+                <a href="{{route('operations.bookings.index')}}" class="nav-link {{ (request()->is('operations/bookings*'))? 'active' : '' }}">
+                  <i class="nav-icon fas fa-hotel"></i>
+                  <p>
+                    Bookings
+                  </p>
+                </a>
+              </li>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->

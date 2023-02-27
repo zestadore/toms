@@ -6,7 +6,8 @@ use Illuminate\View\Component;
 
 class destination extends Component
 {
-    public $destinations = [],$checkInDate,$key;
+    public $destinations = [],$key;
+    public $checkInDate;
     public function __construct($destinations,$date,$key)
     {
         $this->destinations=$destinations[0];
