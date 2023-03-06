@@ -71,7 +71,8 @@ class QuotationController extends Controller
             'package_name'=>$request->package_name,
             'guest_name'=>$request->guest_name,
             'quote_id'=>$quote_id,
-            'status'=>0
+            'status'=>0,
+            'type'=>$request->type??0
         ];
         $res=Quotation::create($data);
         if($res){
@@ -102,7 +103,13 @@ class QuotationController extends Controller
 
     public function createQuoteRevision($quote_id)
     {
-        return view('application.quotations.revisions.create',['quote_id'=>$quote_id]);
+        $quotation=Quotation::find(Crypt::decrypt($quote_id));
+        if($quotation->type==0){
+            return view('application.quotations.revisions.create',['quote_id'=>$quote_id]);
+        }elseif($quotation->type==1){
+            $vehicle=Vehicle::where('status',1)->get();
+            return view('application.quotations.revisions.create_transportation_revision',['quote_id'=>$quote_id,'vehicles'=>$vehicle]);
+        }
     }
 
     public function saveQuoteRevison(ValidateRevision $request)
@@ -153,11 +160,23 @@ class QuotationController extends Controller
         // dd($netRate);
         $detArray=[];
         foreach($details as $detail){
+            $destinationId=0;
+            $hotelId=0;
+            $roomCategoryId=0;
+            if($detail->destination>0){
+                $destinationId=Crypt::decrypt($detail->destination);
+            }
+            if($detail->hotel>0){
+                $hotelId=Crypt::decrypt($detail->hotel);
+            }
+            if($detail->room>0){
+                $roomCategoryId=Crypt::decrypt($detail->room);
+            }
             $detArray[]=[
                 'revision_id'=>Crypt::decrypt($netRate[0]->revision_id),
-                'destination_id'=>Crypt::decrypt($detail->destination),
-                'hotel_id'=>Crypt::decrypt($detail->hotel),
-                'room_category_id'=>Crypt::decrypt($detail->room),
+                'destination_id'=>$destinationId??0,
+                'hotel_id'=>$hotelId??0,
+                'room_category_id'=>$roomCategoryId??0,
                 'checkin'=>Carbon::parse($detail->checkin)->format('Y-m-d'),
                 'single'=>$detail->sgl_rooms,
                 'double'=>$detail->dbl_rooms,
@@ -199,11 +218,45 @@ class QuotationController extends Controller
         }
     }
 
+    public function saveTransportationRevision(Request $request)
+    {
+        $transportationRate=json_decode($request->transportation_rate);
+        $netRate=json_decode($request->net_rate);
+        $revId=QuoteRevision::where('quotation_id',Crypt::decrypt($transportationRate[0]?->quotation_id))->count();
+        $revId+=1;
+        $data=[
+            'quotation_id'=>Crypt::decrypt($transportationRate[0]?->quotation_id),
+            'rev_id'=>$revId,
+            'arrival_date'=>Carbon::parse($transportationRate[0]?->arrival_date)->format('Y-m-d'),
+            'allowed_kms'=>$transportationRate[0]?->total_kms,
+            'no_nights'=>$transportationRate[0]?->no_days-1,
+            'adults'=>0,
+            'meal_plan'=>'CP',
+            'vehicle_id'=>Crypt::decrypt($transportationRate[0]->vehicle_id),
+            'vehicle_rate'=>$transportationRate[0]->gross_vehicle_rate,
+            'hotel_addons'=>0,
+            'vehicle_addons'=>0,
+            'grand_total'=>$netRate[0]->transportation_cost,
+            'markup_type'=>$netRate[0]->markup_type,
+            'markup'=>$netRate[0]->markup,
+            'markup_amount'=>$netRate[0]->markup_amount,
+            'gst'=>5,
+            'gst_amount'=>$netRate[0]->gst_amount,
+            'net_rate'=>$netRate[0]->total_net_rate,
+            'status'=>1,
+        ];
+        $res=QuoteRevision::create($data);
+        if($res){
+            return response()->json(['success'=>'Success']);
+        }
+    }
+
     public function revisionCalculationView($rev_id)
     {
         $revison=QuoteRevision::join('quotations','quote_revisions.quotation_id','quotations.id')
             ->join('agents','agents.id','quotations.agent_id')
-            ->select('quote_revisions.*','quotations.*','agents.company_name')->find(Crypt::decrypt($rev_id));
+            ->select('quote_revisions.*','quotations.agent_id','quotations.package_name','quotations.guest_name','quotations.note',
+            'agents.company_name','quotations.id as quotation_table_id')->find(Crypt::decrypt($rev_id));
         $quote_id=Crypt::encrypt($revison->quotation_id);
         $destinations=Destination::where('status',1)->get();
         $vehicle=Vehicle::where('status',1)->get();

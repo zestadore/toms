@@ -70,23 +70,26 @@
                                 </div>
                             </div>
                         </div>
-                        <h5>Accomodation details</h5>
-                        <table class="table table-bordered">
-                            <tr>
-                                <th>Checkin</th>
-                                <th>Destination</th>
-                                <th>Hotel</th>
-                                <th>Room</th>
-                            </tr>
-                            @foreach ($revision->revisionDetails as $item)
+                        @if (count($revision->revisionDetails)>0)
+                            <h5>Accomodation details</h5>
+                            <table class="table table-bordered">
                                 <tr>
-                                    <td>{{Carbon::parse($item->checkin)->format('d-M-Y')}}</td>
-                                    <td>{{$item->destination->destination}}</td>
-                                    <td>{{$item->hotel->hotel}}</td>
-                                    <td>{{$item->roomCategory->room_category}}</td>
+                                    <th>Checkin</th>
+                                    <th>Destination</th>
+                                    <th>Hotel</th>
+                                    <th>Room</th>
                                 </tr>
-                            @endforeach
-                        </table>
+                                @foreach ($revision->revisionDetails as $item)
+                                    <tr>
+                                        <td>{{Carbon::parse($item?->checkin)->format('d-M-Y')}}</td>
+                                        <td>{{$item?->destination?->destination}}</td>
+                                        <td>{{$item?->hotel?->hotel}}</td>
+                                        <td>{{$item?->roomCategory?->room_category}}</td>
+                                    </tr>
+                                @endforeach
+                            </table>
+                        @endif
+                       
                         <h5>Vehicle details</h5>
                         <table class="table table-bordered">
                             <tr>

@@ -77,11 +77,14 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">
+                                <div class="col-lg-4 col-sm-4 col-md-12 col-xs-12">
                                     <x-forms.input class="form-control {{ $errors->has('kms_allowed') ? ' is-invalid' : '' }}" title="KM allowed" name="kms_allowed" id="kms_allowed" type="number" required="True"/>
                                 </div>
-                                <div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">
+                                <div class="col-lg-4 col-sm-4 col-md-12 col-xs-12">
                                     <x-forms.input class="form-control {{ $errors->has('rate') ? ' is-invalid' : '' }}" title="Rate" name="rate" id="rate" type="number" required="True"/>
+                                </div>
+                                <div class="col-lg-4 col-sm-4 col-md-12 col-xs-12">
+                                    <x-forms.input class="form-control {{ $errors->has('add_km_rate') ? ' is-invalid' : '' }}" title="Add km rate" name="add_km_rate" id="add_km_rate" type="number" required="True"/>
                                 </div>
                             </div>
                             <div class="form-group">

@@ -48,6 +48,7 @@ class VehicleController extends Controller
             'category'=>$request->category,
             'kms_allowed'=>$request->kms_allowed,
             'rate'=>$request->rate,
+            'add_km_rate'=>$request->add_km_rate
         ];
         $res=Vehicle::create($data);
         if($res){
@@ -83,6 +84,7 @@ class VehicleController extends Controller
             'category'=>$request->category,
             'kms_allowed'=>$request->kms_allowed,
             'rate'=>$request->rate,
+            'add_km_rate'=>$request->add_km_rate
         ];
         $res=$vehicle->update($data);
         if($res){

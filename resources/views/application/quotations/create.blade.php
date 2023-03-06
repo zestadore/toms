@@ -50,7 +50,7 @@
                     <div class="card-body">
                         <form action="{{route('operations.quotations.store')}}" method="post" id="addNewForm">@csrf
                             <div class="row">
-                                <div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">
+                                <div class="col-lg-4 col-sm-4 col-md-12 col-xs-12">
                                     <div class="form-group">
                                         <label for="agent_id">Agent</label>
                                         <select name="agent_id" id="agent_id" class="form-control" required>
@@ -66,8 +66,23 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">
+                                <div class="col-lg-4 col-sm-4 col-md-12 col-xs-12">
                                     <x-forms.input class="form-control {{ $errors->has('package_name') ? ' is-invalid' : '' }}" title="Package name" name="package_name" id="package_name" type="text" required="False"/>
+                                </div>
+                                <div class="col-lg-4 col-sm-4 col-md-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label for="type">Type</label>
+                                        <select name="type" id="type" class="form-control" required>
+                                            <option value="0">Package</option>
+                                            <option value="1">Transportation only</option>
+                                            <option value="2">Houseboat only</option>
+                                        </select>
+                                        @error('type')
+                                            <span class="error mt-2 text-danger" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">

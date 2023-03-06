@@ -66,6 +66,7 @@
                                     <th>{{ __('Category') }}</th>
                                     <th>{{ __('Km allowed') }}</th>
                                     <th>{{ __('Rate') }}</th>
+                                    <th>{{ __('Add km rate') }}</th>
                                     <th>{{ __('Status') }}</th>
                                     <th class="nosort">Action</th>
                                 </tr>
@@ -131,6 +132,18 @@
                         {
                             data: 'rate',
                             name: 'rate',
+                            render: function(data) {
+                                if (data) {
+                                    return "₹ " + data;
+                                }else{
+                                    return null;
+                                }
+                                
+                            }
+                        },
+                        {
+                            data: 'add_km_rate',
+                            name: 'add_km_rate',
                             render: function(data) {
                                 if (data) {
                                     return "₹ " + data;

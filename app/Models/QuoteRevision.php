@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Quotation;
 
 class QuoteRevision extends Model
 {
@@ -24,7 +25,13 @@ class QuoteRevision extends Model
     }
 
     public function getRevisionCountAttribute(){
-        return $this->revisionDetails()->count();
+        $quote=Quotation::find($this->attributes['quotation_id']);
+        if($quote->type>0){
+            $count=1;
+        }else{
+            $count=$this->revisionDetails()->count();
+        }
+        return $count;
     }
 
     public function getAccomodationCostAttribute(){

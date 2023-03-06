@@ -79,10 +79,10 @@
                             </tr>
                             @foreach ($revision->revisionDetails as $item)
                                 <tr>
-                                    <td>{{Carbon::parse($item->checkin)->format('d-M-Y')}}</td>
-                                    <td>{{$item->destination->destination}}</td>
-                                    <td>{{$item->hotel->hotel}}</td>
-                                    <td>{{$item->roomCategory->room_category}}</td>
+                                    <td>{{Carbon::parse($item?->checkin)->format('d-M-Y')}}</td>
+                                    <td>{{$item?->destination?->destination}}</td>
+                                    <td>{{$item?->hotel?->hotel}}</td>
+                                    <td>{{$item?->roomCategory?->room_category}}</td>
                                 </tr>
                             @endforeach
                         </table>
