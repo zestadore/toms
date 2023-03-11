@@ -30,7 +30,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    protected $appends=['image_path'];
+    protected $appends=['image_path','full_name'];
 
     public function getImagePathAttribute(){
         if($this->attributes['image']!=null){
@@ -38,6 +38,10 @@ class User extends Authenticatable
         }else{
             return null;
         }
+    }
+
+    public function getFullNameAttribute(){
+        return $this->attributes['first_name'] . ' ' . $this->attributes['last_name'];
     }
 
 }

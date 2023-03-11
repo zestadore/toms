@@ -36,7 +36,7 @@ class BookingController extends Controller
     {
         $id=Crypt::decrypt($id);
         $booking=Booking::find($id);
-        $revision=QuoteRevision::find($booking->quote_revision_id);
+        $revision=QuoteRevision::join('quotations','quote_revisions.quotation_id','quotations.id')->select(['quote_revisions.*','quotations.guest_name'])->find($booking->quote_revision_id);
         return view('application.bookings.view.index',['revision'=>$revision,'booking'=>$booking]);
     }
 

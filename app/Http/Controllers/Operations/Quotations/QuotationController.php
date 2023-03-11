@@ -29,7 +29,7 @@ class QuotationController extends Controller
             if(Auth::user()->can('isAdmin')){
                 $data= Quotation::query();
             }else{
-                $data= Quotation::query()->where('assigned_to',Crypt::decrypt(Auth::user()->id));
+                $data= Quotation::query()->where('assigned_to',Auth::user()->id);
             }
             $search = $request->search;
             if ($search) {

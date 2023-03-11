@@ -23,7 +23,7 @@ return new class extends Migration
             $table->timestamp('mobile_verified_at')->nullable();
             $table->string('password');
             $table->text('image')->nullable();
-            $table->enum('role',  ['user', 'partner', 'admin'])->default('user');
+            $table->enum('role',  ['user', 'reservations', 'admin','accounts'])->default('user');
             $table->integer('status')->default(1);
             $table->rememberToken();
             $table->timestamps();

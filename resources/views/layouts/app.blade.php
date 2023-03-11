@@ -126,6 +126,29 @@
                 </a>
               </li>
               <li class="nav-header">MASTERS</li>
+              <li class="nav-item {{ (request()->is('admin/members*'))? 'menu-open' : '' }}">
+                <a href="#" class="nav-link {{ (request()->is('admin/members*'))? 'active' : '' }}">
+                  <i class="nav-icon fas fa-user"></i>
+                  <p>
+                    Members
+                    <i class="right fas fa-angle-left"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="{{route('admin.members.index')}}" class="nav-link {{ (request()->is('admin/members'))? 'active' : '' }}">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>List</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{route('admin.members.create')}}" class="nav-link {{ (request()->is('admin/members/create'))? 'active' : '' }}">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Create</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
               <li class="nav-item {{ (request()->is('admin/agents*'))? 'menu-open' : '' }}">
                 <a href="#" class="nav-link {{ (request()->is('admin/agents*'))? 'active' : '' }}">
                   <i class="nav-icon fas fa-users"></i>

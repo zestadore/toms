@@ -22,4 +22,6 @@ Route::middleware(['auth'])->name('admin.')->prefix('admin')->namespace("App\Htt
     Route::resource('vehicles.addons', VehicleAddOnController::class);
     //Quotation notes
     Route::resource('quotation-notes', QuotationNoteController::class);
+    // Members/Users
+    Route::resource('members', UserController::class);
 });
