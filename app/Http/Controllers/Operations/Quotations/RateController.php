@@ -8,6 +8,7 @@ use App\Models\Package;
 use App\Models\PackageRate;
 use App\Models\RoomCategory;
 use App\Models\Vehicle;
+use App\Models\Itinerary;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
@@ -17,7 +18,8 @@ class RateController extends Controller
     public function getHotelList($destination_id)
     {
         $hotels=Hotel::where('destination_id',Crypt::decrypt($destination_id))->get();
-        return response()->json($hotels);
+        $itinerary=Itinerary::where('destination_id',Crypt::decrypt($destination_id))->get();
+        return response()->json(['hotels'=>$hotels,'itineraries'=>$itinerary]);
     }
 
     public function getPackageList($hotel_id,$date)

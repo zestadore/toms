@@ -32,11 +32,19 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
                     <div class="form-group">
                         <label for="rooms">Room categories <span style="color:red;">*</span></label>
                         <select name="rooms[]" id="rooms" class="form-control select-room" data-key="{{$key}}" data-date="{{$checkInDate}}">
                             <option value="">Select a room</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+                    <div class="form-group">
+                        <label for="itinerary">Itinerary <span style="color:red;">*</span></label>
+                        <select name="itinerary[]" id="itinerary" class="form-control select-itinerary" data-key="{{$key}}" data-date="{{$checkInDate}}">
+                            <option value="">Select an itinerary</option>
                         </select>
                     </div>
                 </div>

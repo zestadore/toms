@@ -51,7 +51,6 @@
                         <i class="fas fa-wallet"></i>
                         View package
                       </h3>
-                      <button class="btn btn-info" id="mailableFormat" style="float:right;">Mailable format</button>
                     </div>
                     <div class="card-body">
                         <div class="alert alert-info alert-dismissible">
@@ -91,6 +90,28 @@
                             </table>
                         @endif
                         <br>
+                        <h5>Vehicle details</h5>
+                        <table class="table table-bordered">
+                            <tr>
+                                <td>Vehicle : {{$revision->vehicle->vehicle_name}}</td>
+                                <td>Days : {{$revision->no_nights + 1}}</td>
+                                <td>Allowed Km : {{$revision->allowed_kms}}</td>
+                            </tr>
+                        </table>
+                        <br>
+                        <h5>Pricing</h5>
+                        <table class="table table-bordered">
+                            <tr>
+                                {{-- <td>Accomodation : &#x20b9; {{$revision->accomodation_cost}}</td>
+                                <td>Transportation : &#x20b9; {{$revision->vehicle_rate}}</td>
+                                <td>Grand total : &#x20b9; {{$revision->grand_total}}</td>
+                                <td>GST : &#x20b9; {{$revision->gst_amount}}</td>
+                                <td>Disount : &#x20b9; {{$revision->discount_amount}}</td>
+                                <td>Markup : &#x20b9; {{$revision->markup_amount}}</td> --}}
+                                <td style="color:green;background:yellow;font-style:italic;font-weight: bold;">Net rate : &#x20b9; {{$revision->net_rate}}</td>
+                            </tr>
+                        </table>
+                        <br>
                         @if (count($revision->revisionDetails)>0)
                             <h5>Itinerary</h5>
                             <table class="table table-bordered">
@@ -119,26 +140,6 @@
                                 @endforeach
                             </table>
                         @endif
-                        <h5>Vehicle details</h5>
-                        <table class="table table-bordered">
-                            <tr>
-                                <td>Vehicle : {{$revision->vehicle->vehicle_name}}</td>
-                                <td>Days : {{$revision->no_nights + 1}}</td>
-                                <td>Allowed Km : {{$revision->allowed_kms}}</td>
-                            </tr>
-                        </table>
-                        <h5>Pricing</h5>
-                        <table class="table table-bordered">
-                            <tr>
-                                <td>Accomodation : &#x20b9; {{$revision->accomodation_cost}}</td>
-                                <td>Transportation : &#x20b9; {{$revision->vehicle_rate}}</td>
-                                <td>Grand total : &#x20b9; {{$revision->grand_total}}</td>
-                                <td>GST : &#x20b9; {{$revision->gst_amount}}</td>
-                                <td>Disount : &#x20b9; {{$revision->discount_amount}}</td>
-                                <td>Markup : &#x20b9; {{$revision->markup_amount}}</td>
-                                <td style="color:green;background:yellow;font-style:italic;">Net rate : &#x20b9; {{$revision->net_rate}}</td>
-                            </tr>
-                        </table>
                         <hr>
                         @foreach ($notes as $item)
                             <table class="table table-bordered">
@@ -168,8 +169,6 @@
         <!-- Toastr -->
         <script src="{{asset('assets/admin/plugins/toastr/toastr.min.js')}}"></script>
         <script>
-            $('#mailableFormat').click(function(){
-                window.open("{{route('operations.revision.calculation.mailable_view',$revision->id)}}");
-            });
+            $("body").removeClass("dark-mode");
         </script>
     @endsection

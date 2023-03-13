@@ -221,14 +221,26 @@
                         if(response){
                             var dest=document.getElementsByName('hotels[]');
                             let optionList = dest[key].options;
+                            var itin=document.getElementsByName('itinerary[]');
+                            let optionItin = itin[key].options;
                             optionList.length = 0;
-                            let options=response;
+                            optionItin.length = 0;
+                            let options=response.hotels;
                             optionList.add(
                                 new Option("Select your hotel", "", "")
                             )
                             options.forEach(option =>
                                 optionList.add(
                                     new Option(option.hotel, option.id, option.selected)
+                                )
+                            );
+                            let optionsitin=response.itineraries;
+                            optionItin.add(
+                                new Option("Select an itinerary", "", "")
+                            )
+                            optionsitin.forEach(option =>
+                            optionItin.add(
+                                    new Option(option.title, option.id, option.selected)
                                 )
                             );
                         }
@@ -509,6 +521,7 @@
 
             $('#save-revision').click(function(){
                 var destinations = document.getElementsByName('destinations[]');
+                var itineraries = document.getElementsByName('itinerary[]');
                 var hotels=document.getElementsByName('hotels[]');
                 var rooms=document.getElementsByName('rooms[]');
                 var meals=document.getElementsByName('meal_plan[]');
@@ -521,6 +534,7 @@
                 for(i=0;i<destinations.length;i++){
                     destArray[i]=({
                         'destination':destinations[i].value,
+                        'itinerary':itineraries[i].value,
                         'hotel':hotels[i].value,
                         'room':rooms[i].value,
                         'meals':meals[i].value,

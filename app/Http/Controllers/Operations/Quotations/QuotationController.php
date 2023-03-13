@@ -157,12 +157,12 @@ class QuotationController extends Controller
         $accomodationRate=json_decode($request->acomodation_rate);
         $transportationRate=json_decode($request->transportation_rate);
         $netRate=json_decode($request->net_rate);
-        // dd($netRate);
         $detArray=[];
         foreach($details as $detail){
             $destinationId=0;
             $hotelId=0;
             $roomCategoryId=0;
+            $itineraryId=0;
             if($detail->destination>0){
                 $destinationId=Crypt::decrypt($detail->destination);
             }
@@ -171,6 +171,9 @@ class QuotationController extends Controller
             }
             if($detail->room>0){
                 $roomCategoryId=Crypt::decrypt($detail->room);
+            }
+            if($detail->itinerary>0 or $detail->itinerary!=""){
+                $itineraryId=Crypt::decrypt($detail->itinerary);;
             }
             $detArray[]=[
                 'revision_id'=>Crypt::decrypt($netRate[0]->revision_id),
@@ -183,6 +186,7 @@ class QuotationController extends Controller
                 'extra_adult'=>$detail->ex_beds,
                 'extra_child_bed'=>$detail->ex_bed_children,
                 'extra_child_wout_bed'=>$detail->ex_wouts,
+                'itinerary_id'=>$itineraryId??0,
                 'created_at'=>Now(),
                 'created_by'=>Auth::user()->id
             ];
@@ -264,6 +268,19 @@ class QuotationController extends Controller
         return view('application.quotations.revisions.revision_calculation.view',['revision'=>$revison,'quote_id'=>$quote_id,'destinations'=>$destinations,'vehicles'=>$vehicle,'notes'=>$notes]);
     }
 
+    public function revisionCalculationMailableView($rev_id)
+    {
+        $revison=QuoteRevision::join('quotations','quote_revisions.quotation_id','quotations.id')
+            ->join('agents','agents.id','quotations.agent_id')
+            ->select('quote_revisions.*','quotations.agent_id','quotations.package_name','quotations.guest_name','quotations.note',
+            'agents.company_name','quotations.id as quotation_table_id')->find(Crypt::decrypt($rev_id));
+        $quote_id=Crypt::encrypt($revison->quotation_id);
+        $destinations=Destination::where('status',1)->get();
+        $vehicle=Vehicle::where('status',1)->get();
+        $notes=QuotationNote::where('status',1)->get();
+        return view('application.quotations.revisions.revision_calculation.mailable_format',['revision'=>$revison,'quote_id'=>$quote_id,'destinations'=>$destinations,'vehicles'=>$vehicle,'notes'=>$notes]);
+    }
+
     public function copyRevision($id)
     {
         $id=Crypt::decrypt($id);
@@ -288,8 +305,9 @@ class QuotationController extends Controller
             return response()->json(['error'=>'You have already created booking for this revision']);
         }
         $revision=QuoteRevision::find($id);
+        $quoteId=$revision->quotation_id;
         $data=[
-            'quotaion_id'=>$revision->quotation_id,
+            'quotaion_id'=>$quoteId,
             'quote_revision_id'=>$id,
         ];
         $booking=Booking::create($data)->id;
@@ -308,6 +326,9 @@ class QuotationController extends Controller
             if(count($data)>0){
                 BookingDetails::insert($data);
             }
+            $quote=Quotation::find($quoteId);
+            $quote->update(['status'=>2]);
+            $revision->update(['status'=>2]);
             return response()->json(['success'=>'Success']);
         }
     }

@@ -1,5 +1,6 @@
 <?php
  use App\Models\Availability;
+ use App\Models\Itinerary;
  use Illuminate\Support\Facades\Crypt;
  use Illuminate\Support\Facades\Auth;
 
@@ -18,5 +19,14 @@ function getAvailabilityResult($id){
         return $availability->availability_note;
     }else{
         return "";
+    }
+}
+
+function getItinerary($id){
+    $itinerary=Itinerary::find($id);
+    if($itinerary){
+        return $itinerary->itinerary;
+    }else{
+        return null;
     }
 }
