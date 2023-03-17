@@ -76,6 +76,7 @@
                                 <th>Destination</th>
                                 <th>Hotel</th>
                                 <th>Room</th>
+                                <th>Action</th>
                             </tr>
                             @foreach ($revision->revisionDetails as $item)
                                 <tr>
@@ -83,6 +84,9 @@
                                     <td>{{$item?->destination?->destination}}</td>
                                     <td>{{$item?->hotel?->hotel}}</td>
                                     <td>{{$item?->roomCategory?->room_category}}</td>
+                                    <td>
+                                        <button class="btn btn-primary" onclick="bookingDetails('{{getBookingDetailsId($item?->id)}}')">Booking details</button>
+                                    </td>
                                 </tr>
                             @endforeach
                         </table>
@@ -119,6 +123,62 @@
                   </div><br>
             </div><!--/. container-fluid -->
         </section>
+        <div class="modal fade" id="bookingModal">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Booking details</h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            <x-forms.input class="form-control {{ $errors->has('single') ? ' is-invalid' : '' }}" title="Single" name="single" id="single" type="number" required="True"/>
+                        </div>
+                        <div class="col">
+                            <x-forms.input class="form-control {{ $errors->has('double') ? ' is-invalid' : '' }}" title="Double" name="double" id="double" type="number" required="True"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <x-forms.input class="form-control {{ $errors->has('extra_adult') ? ' is-invalid' : '' }}" title="Ex adult" name="extra_adult" id="extra_adult" type="number" required="True"/>
+                        </div>
+                        <div class="col">
+                            <x-forms.input class="form-control {{ $errors->has('extra_child_bed') ? ' is-invalid' : '' }}" title="Ex Bed(Child)" name="extra_child_bed" id="extra_child_bed" type="number" required="True"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <x-forms.input class="form-control {{ $errors->has('extra_child_wout_bed') ? ' is-invalid' : '' }}" title="Ex child W/out bed" name="extra_child_wout_bed" id="extra_child_wout_bed" type="number" required="True"/>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="status">Status</label>
+                                <select name="status" id="status" class="form-control">
+                                    <option value="0">Pending</option>
+                                    <option value="1">Confirmed</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <x-forms.input class="form-control {{ $errors->has('booking_details') ? ' is-invalid' : '' }}" title="Booking details" name="booking_details" id="booking_details" type="textarea" required="False"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-info" id="bookingDetailsSave" data-id="0">Save</button>
+                </div>
+              </div>
+              <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
     @endsection
     @section('scripts')
         <!-- jquery-validation -->
@@ -160,6 +220,66 @@
                         });
                     }
                 })
+            });
+
+            function bookingDetails(bookingId){
+                var url="{{route('operations.booking.details','ID')}}";
+                url=url.replace('ID',bookingId);
+                $.ajax({
+                    url: url,
+                    type:"get",
+                    success:function(response){
+                        if(response){
+                            response=response.data;
+                            $('#single').val(response.single);
+                            $('#double').val(response.double);
+                            $('#extra_adult').val(response.extra_adult);
+                            $('#extra_child_bed').val(response.extra_child_bed);
+                            $('#extra_child_wout_bed').val(response.extra_child_wout_bed);
+                            $('#booking_details').val(response.booking_details);
+                            $('#bookingDetailsSave').attr("data-id",bookingId);
+                            $('#status').val(response.status);
+                            $('#bookingModal').modal('show');
+                        }else{
+                            alert('Oops! Some error happened!');
+                        }
+                    },
+                });
+                
+            }
+
+            $('#bookingDetailsSave').click(function(){
+                var id=$(this).attr('data-id');
+                var single=$('#single').val();
+                var double=$('#double').val();
+                var exAdult=$('#extra_adult').val();
+                var exChildBed=$('#extra_child_bed').val();
+                var exChildWout=$('#extra_child_wout_bed').val();
+                var bookingDetails=$('#booking_details').val();
+                var status=$('#status').val();
+                $.ajax({
+                    url: "{{route('operations.booking.details.save')}}",
+                    type:"post",
+                    data:{
+                        "_token": "{{ csrf_token() }}",
+                        id:id,
+                        single:single,
+                        double:double,
+                        extra_adult:exAdult,
+                        extra_child_bed:exChildBed,
+                        extra_child_wout_bed:exChildWout,
+                        booking_details:bookingDetails,
+                        status:status
+                    },
+                    success:function(response){
+                        if(response.success){
+                            $('#bookingModal').modal('hide');
+                            swal("Good job!", response.success, "success");
+                        }else{
+                            swal("Oops!", response.error, "error");
+                        }
+                    },
+                });
             });
         </script>
     @endsection

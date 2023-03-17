@@ -30,4 +30,7 @@ Route::middleware(['auth'])->name('operations.')->prefix('operations')->group(fu
     Route::get('bookings', [App\Http\Controllers\Operations\BookingController::class, 'index'])->name('bookings.index');
     Route::get('bookings/{id}', [App\Http\Controllers\Operations\BookingController::class, 'show'])->name('bookings.show');
     Route::post('forward-bookings/{rev_id}', [App\Http\Controllers\Operations\BookingController::class, 'forwardBookings'])->name('booking.forward');
+    Route::post('change-guest-name', [App\Http\Controllers\Operations\BookingController::class, 'changeGuestName'])->name('guest_name.change');
+    Route::get('booking-details/{booking_id}', [App\Http\Controllers\Operations\BookingController::class, 'getBookingDetails'])->name('booking.details');
+    Route::post('booking-details', [App\Http\Controllers\Operations\BookingController::class, 'saveBookingDetails'])->name('booking.details.save');
 });

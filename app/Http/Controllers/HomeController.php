@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -63,6 +64,7 @@ class HomeController extends Controller
     {
         return view('application.profile.change_password');
     }
+
     public function updatePassword(Request $request)
     {
         $request->validate([
@@ -73,6 +75,52 @@ class HomeController extends Controller
             return redirect()->back()->with(['success'=>'Password updated successfully']);
         }else{
             return redirect()->back()->with(['error'=>'Failed to update the password']);
+        }
+    }
+
+    public function getCompanyDetails()
+    {
+        $company=Company::find(1);
+        return view('application.company_details',['data'=>$company]);
+    }
+
+    public function updateCompanyDetails(Request $request)
+    {
+        $request->validate([
+			'company_name' => 'required',
+            'contact_1'=>'required',
+            'logo'=>'nullable|mimes:jpeg,jpg,png|max:2048',
+            'email_id'=>'required',
+            'gst_number'=>'required',
+            'gst'=>'required',
+		]);
+        $data=Company::find(1);
+        $image=$data?->logo??Null;
+        if($request->file('logo')){
+            if($data?->logo!=null){
+                unlink(public_path('uploads/company/'. $data?->logo));
+            }
+            $file= $request->file('logo');
+            $filename= date('YmdHi').$file->getClientOriginalName();
+            $file-> move(public_path('uploads/company'), $filename);
+            $image= $filename;
+        }
+        $dataSet=[
+            'company_name'=>$request->company_name,
+            'contact_1'=>$request->contact_1,
+            'contact_2'=>$request->contact_2,
+            'email_id'=>$request->email_id,
+            'gst_number'=>$request->gst_number,
+            'gst'=>$request->gst,
+            'address'=>$request->address,
+            'url'=>$request->url,
+            'logo'=>$image
+        ];
+        $res=Company::updateOrCreate(['id'=>1],$dataSet);
+        if($res){
+            return redirect()->back()->with(['success'=>'Data updated successfully']);
+        }else{
+            return redirect()->back()->with(['error'=>'Failed to update the data']);
         }
     }
 }

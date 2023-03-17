@@ -1,6 +1,7 @@
 <?php
  use App\Models\Availability;
  use App\Models\Itinerary;
+ use App\Models\BookingDetails;
  use Illuminate\Support\Facades\Crypt;
  use Illuminate\Support\Facades\Auth;
 
@@ -29,4 +30,9 @@ function getItinerary($id){
     }else{
         return null;
     }
+}
+
+function getBookingDetailsId($id){
+    $detail=BookingDetails::where('quote_revision_details_id',Crypt::decrypt($id))->first();
+    return $detail->id;
 }

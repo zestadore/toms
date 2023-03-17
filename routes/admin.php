@@ -8,6 +8,8 @@ Route::middleware(['auth'])->name('admin.')->prefix('admin')->namespace("App\Htt
     Route::resource('destinations', DestinationController::class);
     Route::resource('categories', CategoryController::class);
     Route::resource('agents', AgentController::class);
+    Route::get('company-details', [App\Http\Controllers\HomeController::class, 'getCompanyDetails'])->name('company.details');
+    Route::post('company-details', [App\Http\Controllers\HomeController::class, 'updateCompanyDetails'])->name('company.details.save');
     //Hotels part
     Route::resource('hotels', HotelController::class);
     Route::resource('hotels.rooms', RoomCategoryController::class);

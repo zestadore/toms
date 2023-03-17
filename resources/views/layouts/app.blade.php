@@ -350,6 +350,15 @@
                   </p>
                 </a>
               </li>
+              <li class="nav-header">SETTINGS</li>
+              <li class="nav-item">
+                <a href="{{route('admin.company.details')}}" class="nav-link {{ (request()->is('operations/company-details*'))? 'active' : '' }}">
+                  <i class="nav-icon fas fa-registered"></i>
+                  <p>
+                    Company Details
+                  </p>
+                </a>
+              </li>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->

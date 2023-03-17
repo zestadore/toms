@@ -67,6 +67,7 @@
                                 <tr>
                                     <th class="nosort">#</th>
                                     <th>{{ __('Rev id') }}</th>
+                                    <th>{{ __('Guest name') }}</th>
                                     {{-- <th>{{ __('Requested') }}</th> --}}
                                     {{-- <th>{{ __('Status') }}</th> --}}
                                     <th class="nosort">Action</th>
@@ -121,6 +122,10 @@
                             name: 'quote_revision'
                         },
                         {
+                            data: 'guest_name',
+                            name: 'guest_name'
+                        },
+                        {
                             data: 'action',
                             name: 'action'
                         }
@@ -146,5 +151,49 @@
                 window.location.href=url;
             }
 
+            function guestName(id){
+                swal({
+                    title: 'Are you sure?',
+                    text: "You won't be change the guest name!",
+                    icon: 'warning',
+                    buttons: true,
+                    dangerMode: true,
+                }).then((result) => {
+                    if (result) {
+                        swal({
+                            title: "Guest name!",
+                            text: "Please enter the guest name:",
+                            content: "input",
+                           
+                        }).then(function(inputValue){
+                            if (inputValue === null) return false;
+                            
+                            if (inputValue === "") {
+                                swal.showInputError("You need to write something!");
+                                return false
+                            }
+                            var url="{{route('operations.guest_name.change')}}";
+                            $.ajax({
+                                url: url,
+                                type:"post",
+                                data:{
+                                    "_token": "{{ csrf_token() }}",
+                                    id:id,
+                                    "name":inputValue
+                                },
+                                success:function(response){
+                                    console.log(response);
+                                    if(response.success){
+                                        swal("Good job!", "You have changhed the guest name!", "success");
+                                        drawTable();
+                                    }else{
+                                        swal("Oops!", "Failed to change the guest name!", "danger");
+                                    }
+                                },
+                            });
+                        });
+                    }
+                })
+            }
         </script>
     @endsection

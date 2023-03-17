@@ -126,8 +126,8 @@
                             name: 'created_by_name'
                         },
                         {
-                            data: 'status',
-                            name: 'status',
+                            data: 'availablity_status',
+                            name: 'availablity_status',
                             render: function(data) {
                                 if (data ==1) {
                                     return "<span class='badge badge-primary'>Checked</span>";
