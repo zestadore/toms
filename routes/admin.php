@@ -28,4 +28,6 @@ Route::middleware(['auth'])->name('admin.')->prefix('admin')->namespace("App\Htt
     Route::resource('members', UserController::class);
     // Itinerary
     Route::resource('itinerary', ItineraryController::class);
+    // Bank
+    Route::resource('banks', BankController::class);
 });

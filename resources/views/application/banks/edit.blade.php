@@ -1,6 +1,6 @@
 @extends('layouts.app')
     @section('title')
-        <title>TOMS | Company details</title>
+        <title>TOMS | Agents</title>
     @endsection
     @section('css')
         <link rel="stylesheet" href="{{asset('assets/admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
@@ -10,12 +10,13 @@
     @endsection
     @section('breadcrump')
         <div class="col-sm-6">
-            <h1 class="m-0">Company details</h1>
+            <h1 class="m-0">Bank</h1>
         </div><!-- /.col -->
         <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="{{route('dashboard')}}">Dashboard</a></li>
-            <li class="breadcrumb-item active">Company details</li>
+            <li class="breadcrumb-item"><a href="{{route('admin.banks.index')}}">Banks</a></li>
+            <li class="breadcrumb-item active">Edit bank</li>
             </ol>
         </div><!-- /.col -->
     @endsection
@@ -42,39 +43,37 @@
                 <div class="card card-default color-palette-box">
                     <div class="card-header">
                       <h3 class="card-title">
-                        <i class="fas fa-registered"></i>
-                        Company details
+                        <i class="fas fa-project-diagram"></i>
+                        Edit bank
                       </h3>
                     </div>
                     <div class="card-body">
-                        <form action="{{route('admin.company.details.save')}}" method="post" id="addNewForm" enctype='multipart/form-data'>@csrf
-                            <x-forms.input class="form-control {{ $errors->has('company_name') ? ' is-invalid' : '' }}" title="Company name" name="company_name" id="company_name" type="text" required="True"/>
+                        <form action="{{route('admin.banks.update',$data->id)}}" method="post" id="addNewForm">@csrf
+                            @method('put')
                             <div class="row">
                                 <div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">
-                                    <x-forms.input class="form-control {{ $errors->has('contact_1') ? ' is-invalid' : '' }}" title="Contact 1" name="contact_1" id="contact_1" type="number" required="True"/>
+                                    <x-forms.input class="form-control {{ $errors->has('bank_name') ? ' is-invalid' : '' }}" title="Bank name" name="bank_name" id="bank_name" type="text" required="True"/>
                                 </div>
                                 <div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">
-                                    <x-forms.input class="form-control {{ $errors->has('contact_2') ? ' is-invalid' : '' }}" title="Contact 2" name="contact_2" id="contact_2" type="number" required="False"/>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">
-                                    <x-forms.input class="form-control {{ $errors->has('email_id') ? ' is-invalid' : '' }}" title="Email id" name="email_id" id="email_id" type="email" required="True"/>
-                                </div>
-                                <div class="col-lg-6 col-sm-6 col-md-12 col-xs-12">
-                                    <x-forms.input class="form-control {{ $errors->has('url') ? ' is-invalid' : '' }}" title="Website" name="url" id="url" type="text" required="False"/>
+                                    <x-forms.input class="form-control {{ $errors->has('branch') ? ' is-invalid' : '' }}" title="Branch" name="branch" id="branch" type="text" required="True"/>
                                 </div>
                             </div>
                             <x-forms.input class="form-control {{ $errors->has('address') ? ' is-invalid' : '' }}" title="Address" name="address" id="address" type="textarea" required="False"/>
                             <div class="row">
                                 <div class="col-lg-4 col-sm-4 col-md-12 col-xs-12">
-                                    <x-forms.input class="form-control {{ $errors->has('gst_number') ? ' is-invalid' : '' }}" title="GST IN" name="gst_number" id="gst_number" type="text" required="True"/>
+                                    <x-forms.input class="form-control {{ $errors->has('account_name') ? ' is-invalid' : '' }}" title="Account name" name="account_name" id="account_name" type="text" required="True"/>
                                 </div>
                                 <div class="col-lg-4 col-sm-4 col-md-12 col-xs-12">
-                                    <x-forms.input class="form-control {{ $errors->has('gst') ? ' is-invalid' : '' }}" title="GST(%)" name="gst" id="gst" type="number" required="True"/>
+                                    <x-forms.input class="form-control {{ $errors->has('account_number') ? ' is-invalid' : '' }}" title="Account number" name="account_number" id="account_number" type="text" required="True"/>
                                 </div>
                                 <div class="col-lg-4 col-sm-4 col-md-12 col-xs-12">
-                                    <x-forms.input class="custom-file-input {{ $errors->has('logo') ? ' is-invalid' : '' }}" title="Logo" name="logo" id="logo" type="file" required="False"/>
+                                    <x-forms.input class="form-control {{ $errors->has('ifsc') ? ' is-invalid' : '' }}" title="IFSC" name="ifsc" id="ifsc" type="text" required="True"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="custom-control custom-switch">
+                                  <input type="checkbox" class="custom-control-input" id="customSwitch1" name="status" checked>
+                                  <label class="custom-control-label" for="customSwitch1">Status</label>
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-info" style="float:right;">Save</button>
@@ -93,37 +92,37 @@
             $(function () {
                 $('#addNewForm').validate({
                     rules: {
-                        company_name: {
+                        bank_name: {
                             required: true
                         },
-                        contact_1: {
+                        branch: {
                             required: true
                         },
-                        email_id: {
+                        account_name: {
                             required: true
                         },
-                        gst_number: {
+                        account_number: {
                             required: true
                         },
-                        gst: {
+                        ifsc: {
                             required: true
                         },
                     },
                     messages: {
-                        company_name: {
-                            required: "Please enter company name"
+                        bank_name: {
+                            required: "Please enter the bank name"
                         },
-                        contact_1: {
-                            required: "Please enter the contact number"
+                        branch: {
+                            required: "Please enter the branch"
                         },
-                        email_id: {
-                            required: "Please enter the email id"
+                        account_name: {
+                            required: "Please enter the account name"
                         },
-                        gst_number: {
-                            required: "Please enter the GST number"
+                        account_number: {
+                            required: "Please enter the account number"
                         },
-                        gst: {
-                            required: "Please enter the GST(%)"
+                        ifsc: {
+                            required: "Please enter the is code"
                         },
                     },
                     errorElement: 'span',
@@ -140,17 +139,21 @@
                 });
             });
 
-            function preFillForm(){
-                $('#company_name').val('{{$data?->company_name}}');
-                $('#contact_1').val('{{$data?->contact_1}}');
-                $('#contact_2').val('{{$data?->contact_2}}');
-                $('#email_id').val('{{$data?->email_id}}');
-                $('#url').val('{{$data?->url}}');
-                $('#address').val('{{$data?->address}}');
-                $('#gst_number').val('{{$data?->gst_number}}');
-                $('#gst').val('{{$data?->gst}}');
+            function preFill(){
+                $('#bank_name').val('{{$data->bank_name}}');
+                $('#branch').val('{{$data->branch}}');
+                $('#address').val('{{$data->address}}');
+                $('#account_name').val('{{$data->account_name}}');
+                $('#account_number').val('{{$data->account_number}}');
+                $('#ifsc').val('{{$data->ifsc}}');
+                var status='{{$data->status}}';
+                if(status==0){
+                    $("#customSwitch1").prop('checked', false);
+                }else{
+                    $("#customSwitch1").prop('checked', true);
+                }
             }
 
-            preFillForm();
+            preFill();
         </script>
     @endsection

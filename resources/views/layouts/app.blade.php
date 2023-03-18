@@ -12,9 +12,11 @@
   <link rel="stylesheet" href="{{asset('assets/admin/plugins/overlayScrollbars/css/OverlayScrollbars.min.css')}}">
   <!-- Theme style -->
   <link rel="stylesheet" href="{{asset('assets/admin/dist/css/adminlte.min.css')}}">
+  <link rel="stylesheet" href="{{asset('assets/admin/dist/css/loader.css')}}">
   @yield('css')
 </head>
 <body class="hold-transition dark-mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+  <div id="loader"></div>
 <div class="wrapper">
 
   <!-- Preloader -->
@@ -359,6 +361,29 @@
                   </p>
                 </a>
               </li>
+              <li class="nav-item {{ (request()->is('admin/banks*'))? 'menu-open' : '' }}">
+                <a href="#" class="nav-link {{ (request()->is('admin/banks*'))? 'active' : '' }}">
+                  <i class="nav-icon fas fa-landmark"></i>
+                  <p>
+                    Banks
+                    <i class="right fas fa-angle-left"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="{{route('admin.banks.index')}}" class="nav-link {{ (request()->is('admin/banks'))? 'active' : '' }}">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>List</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{route('admin.banks.create')}}" class="nav-link {{ (request()->is('admin/banks/create'))? 'active' : '' }}">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Create</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
@@ -422,6 +447,16 @@
 <script src="{{asset('assets/admin/dist/js/demo.js')}}"></script>
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
 <script src="{{asset('assets/admin/dist/js/pages/dashboard2.js')}}"></script>
+<script>
+  $('#loader').hide();
+  $(document)
+  .ajaxStart(function () {
+      $('#loader').show();
+  })
+  .ajaxStop(function () {
+      $('#loader').hide();
+  });
+</script>
 @yield('scripts')
 </body>
 </html>
