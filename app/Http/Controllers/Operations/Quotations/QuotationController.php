@@ -268,7 +268,7 @@ class QuotationController extends Controller
         return view('application.quotations.revisions.revision_calculation.view',['revision'=>$revison,'quote_id'=>$quote_id,'destinations'=>$destinations,'vehicles'=>$vehicle,'notes'=>$notes]);
     }
 
-    public function revisionCalculationMailableView($rev_id)
+    public function revisionCalculationMailableView($rev_id,$choice)
     {
         $revison=QuoteRevision::join('quotations','quote_revisions.quotation_id','quotations.id')
             ->join('agents','agents.id','quotations.agent_id')
@@ -278,7 +278,21 @@ class QuotationController extends Controller
         $destinations=Destination::where('status',1)->get();
         $vehicle=Vehicle::where('status',1)->get();
         $notes=QuotationNote::where('status',1)->get();
-        return view('application.quotations.revisions.revision_calculation.mailable_format',['revision'=>$revison,'quote_id'=>$quote_id,'destinations'=>$destinations,'vehicles'=>$vehicle,'notes'=>$notes]);
+        switch ($choice) {
+            case 'full':
+                return view('application.quotations.revisions.revision_calculation.mailable_format',['revision'=>$revison,'quote_id'=>$quote_id,'destinations'=>$destinations,'vehicles'=>$vehicle,'notes'=>$notes]);
+                break;
+            case 'skeletalHotel':
+                return view('application.quotations.revisions.revision_calculation.skeletal_with_hotels',['revision'=>$revison,'quote_id'=>$quote_id,'destinations'=>$destinations,'vehicles'=>$vehicle,'notes'=>$notes]);
+                break;
+            case 'simpleSkeletal':
+                return view('application.quotations.revisions.revision_calculation.skeletal_simple',['revision'=>$revison,'quote_id'=>$quote_id,'destinations'=>$destinations,'vehicles'=>$vehicle,'notes'=>$notes]);
+                break;
+            default:
+                return view('application.quotations.revisions.revision_calculation.itinerary_only',['revision'=>$revison,'quote_id'=>$quote_id,'destinations'=>$destinations,'vehicles'=>$vehicle,'notes'=>$notes]);
+                break;
+        }
+        
     }
 
     public function copyRevision($id)

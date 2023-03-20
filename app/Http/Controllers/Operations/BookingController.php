@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Booking;
 use App\Models\Quotation;
 use App\Models\QuoteRevision;
+use App\Models\VehicleBooking;
 use Illuminate\Support\Facades\Crypt;
 use DataTables;
 use App\Jobs\ForwardBookings;
@@ -71,6 +72,32 @@ class BookingController extends Controller
     {
         $details=BookingDetails::find(Crypt::decrypt($request->id));
         $res=$details->update($request->except(['_token','id']));
+        if($res){
+            return response()->json(['success'=>"Booking details updated successfully!"]);
+        }else{
+            return response()->json(['error'=>"Failed to update the booking details, kindly try again!"]);
+        }
+    }
+
+    public function getVehicleBookingDetails($bookingId)
+    {
+        $details=VehicleBooking::where('booking_id',Crypt::decrypt($bookingId))->first();
+        if($details){
+            return response()->json(['data'=>$details]);
+        }
+    }
+
+    public function saveVehicleBookingDetails(Request $request)
+    {
+        $data=[
+            'booking_id'=>Crypt::decrypt($request->booking_id),
+            'quote_revision_details_id'=>Crypt::decrypt($request->quote_revision_details_id),
+            'vehicle_purchase_rate'=>$request->vehicle_purchase_rate,
+            'status'=>$request->status,
+            'vendor'=>$request->vendor,
+            'booking_details'=>$request->booking_details
+        ];
+        $res=VehicleBooking::updateOrCreate(['booking_id'=>Crypt::decrypt($request->booking_id),'quote_revision_details_id'=>Crypt::decrypt($request->quote_revision_details_id)],$data);
         if($res){
             return response()->json(['success'=>"Booking details updated successfully!"]);
         }else{

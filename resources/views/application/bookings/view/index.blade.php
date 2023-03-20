@@ -96,6 +96,7 @@
                                 <td>Vehicle : {{$revision->vehicle->vehicle_name}}</td>
                                 <td>Days : {{$revision->no_nights + 1}}</td>
                                 <td>Allowed Km : {{$revision->allowed_kms}}</td>
+                                <td><button class="btn btn-primary" id="vehicleBookingDetails">Booking details</button></td>
                             </tr>
                         </table>
                         {{-- <h5>Pricing</h5>
@@ -172,6 +173,51 @@
                 <div class="modal-footer justify-content-between">
                   <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                   <button type="button" class="btn btn-info" id="bookingDetailsSave" data-id="0">Save</button>
+                </div>
+              </div>
+              <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+        <div class="modal fade" id="vehicleBookingModal">
+            <div class="modal-dialog modal-md">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Vehicle booking details</h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="status">Status</label>
+                                <select name="vehicle_status" id="vehicle_status" class="form-control">
+                                    <option value="0">Pending</option>
+                                    <option value="1">Confirmed</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <x-forms.input class="form-control {{ $errors->has('vehicle_purchase_rate') ? ' is-invalid' : '' }}" title="Purchase rate" name="vehicle_purchase_rate" id="vehicle_purchase_rate" type="number" required="True"/>
+                        </div>
+                        <div class="col">
+                            <x-forms.input class="form-control {{ $errors->has('vendor') ? ' is-invalid' : '' }}" title="Vendor" name="vendor" id="vendor" type="text" required="True"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <x-forms.input class="form-control {{ $errors->has('vehicle_booking_details') ? ' is-invalid' : '' }}" title="Booking details" name="vehicle_booking_details" id="vehicle_booking_details" type="textarea" required="False"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-info" id="vehicleBookingDetailsSave">Save</button>
                 </div>
               </div>
               <!-- /.modal-content -->
@@ -280,6 +326,65 @@
                         }
                     },
                 });
+            });
+
+            $('#vehicleBookingDetails').click(function(){
+                var bookingId="{{$booking->id}}";
+                var url="{{route('operations.vehicle.booking.details','ID')}}";
+                url=url.replace('ID',bookingId);
+                $.ajax({
+                    url: url,
+                    type:"get",
+                    success:function(response){
+                        if(response){
+                            response=response.data;
+                            $('#vehicle_purchase_rate').val(response.vehicle_purchase_rate);
+                            $('#vendor').val(response.vendor);
+                            $('#vehicle_booking_details').val(response.booking_details);
+                            $('#vehicle_status').val(response.status);
+                            $('#vehicleBookingModal').modal('show');
+                        }else{
+                            $('#vehicle_purchase_rate').val(0);
+                            $('#vendor').val("");
+                            $('#vehicle_booking_details').val("");
+                            $('#vehicleBookingModal').modal('show');
+                        }
+                    },
+                });
+            });
+
+            $('#vehicleBookingDetailsSave').click(function(){
+                var bookingId="{{$booking->id}}";
+                var quote_revision_details_id="{{$revision->id}}";
+                var vehicle_purchase_rate=$('#vehicle_purchase_rate').val();
+                var vendor=$('#vendor').val();
+                var status=$('#vehicle_status').val();
+                var vehicle_booking_details=$('#vehicle_booking_details').val();
+                if(vehicle_purchase_rate>0 && vendor!=""){
+                    $.ajax({
+                    url: "{{route('operations.vehicle.booking.details.save')}}",
+                    type:"post",
+                    data:{
+                        "_token": "{{ csrf_token() }}",
+                        booking_id:bookingId,
+                        quote_revision_details_id:quote_revision_details_id,
+                        vehicle_purchase_rate:vehicle_purchase_rate,
+                        vendor:vendor,
+                        booking_details:vehicle_booking_details,
+                        status:status
+                    },
+                    success:function(response){
+                        if(response.success){
+                            $('#vehicleBookingModal').modal('hide');
+                            swal("Good job!", response.success, "success");
+                        }else{
+                            swal("Oops!", response.error, "error");
+                        }
+                    },
+                });
+                }else{
+                    swal("Oops!", "Kindly fill the entire details!", "error");
+                }
             });
         </script>
     @endsection

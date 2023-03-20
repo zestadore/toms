@@ -51,20 +51,6 @@
                         <i class="fas fa-wallet"></i>
                         View package
                       </h3>
-                      <div class="btn-group" style="float:right;">
-                            <button type="button" class="btn btn-default">Mailable formats</button>
-                            <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
-                            <span class="sr-only">Toggle Dropdown</span>
-                            </button>
-                            <div class="dropdown-menu" role="menu" style="">
-                                <a class="dropdown-item" id="mailableFormat" href="#">With itinerary</a>
-                                <a class="dropdown-item" id="skeletalHotel" href="#">Skeletal itinerary with hotels</a>
-                                <a class="dropdown-item" id="simpleSkeletal" href="#">Simple skeletal itinerary</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" id="itineraryOnly" href="#">Itinerary only</a>
-                            </div>
-                      </div>
-                      {{-- <button class="btn btn-info" id="mailableFormat" style="float:right;">Mailable format</button> --}}
                     </div>
                     <div class="card-body">
                         <div class="alert alert-info alert-dismissible">
@@ -80,29 +66,10 @@
                                 </div>
                                 <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                                     Date of arrival : {{Carbon::parse($revision->arrival_date)->format('d-M-Y')}}<br>
-                                    Meal plan : {{$revision->meal_plan}}<br>
+                                    {{-- Meal plan : {{$revision->meal_plan}}<br> --}}
                                 </div>
                             </div>
                         </div>
-                        @if (count($revision->revisionDetails)>0)
-                            <h5>Accomodation details</h5>
-                            <table class="table table-bordered">
-                                <tr>
-                                    <th>Checkin</th>
-                                    <th>Destination</th>
-                                    <th>Hotel</th>
-                                    <th>Room</th>
-                                </tr>
-                                @foreach ($revision->revisionDetails as $item)
-                                    <tr>
-                                        <td>{{Carbon::parse($item?->checkin)->format('d-M-Y')}}</td>
-                                        <td>{{$item?->destination?->destination}}</td>
-                                        <td>{{$item?->hotel?->hotel}}</td>
-                                        <td>{{$item?->roomCategory?->room_category}}</td>
-                                    </tr>
-                                @endforeach
-                            </table>
-                        @endif
                         <br>
                         @if (count($revision->revisionDetails)>0)
                             <h5>Itinerary</h5>
@@ -110,7 +77,7 @@
                                 @foreach ($revision->revisionDetails as $item)
                                     <tr>
                                         <span>Day {{$loop->iteration}} | Date : {{Carbon::parse($item?->checkin)->format('d-M-Y')}}</span>
-                                        <p><span>Destination : {{$item->destination?->destination}} </span></p>
+                                        <p><span>Destination : {{$item->destination->destination}} </span></p>
                                         <div>
                                             {{getItinerary($item?->itinerary_id)}}
                                         </div>
@@ -132,26 +99,6 @@
                                 @endforeach
                             </table>
                         @endif
-                        <h5>Vehicle details</h5>
-                        <table class="table table-bordered">
-                            <tr>
-                                <td>Vehicle : {{$revision->vehicle->vehicle_name}}</td>
-                                <td>Days : {{$revision->no_nights + 1}}</td>
-                                <td>Allowed Km : {{$revision->allowed_kms}}</td>
-                            </tr>
-                        </table>
-                        <h5>Pricing</h5>
-                        <table class="table table-bordered">
-                            <tr>
-                                <td>Accomodation : &#x20b9; {{$revision->accomodation_cost}}</td>
-                                <td>Transportation : &#x20b9; {{$revision->vehicle_rate}}</td>
-                                <td>Grand total : &#x20b9; {{$revision->grand_total}}</td>
-                                <td>GST : &#x20b9; {{$revision->gst_amount}}</td>
-                                <td>Disount : &#x20b9; {{$revision->discount_amount}}</td>
-                                <td>Markup : &#x20b9; {{$revision->markup_amount}}</td>
-                                <td style="color:green;background:yellow;font-style:italic;">Net rate : &#x20b9; {{$revision->net_rate}}</td>
-                            </tr>
-                        </table>
                         <hr>
                         @foreach ($notes as $item)
                             <table class="table table-bordered">
@@ -181,17 +128,6 @@
         <!-- Toastr -->
         <script src="{{asset('assets/admin/plugins/toastr/toastr.min.js')}}"></script>
         <script>
-            $('#mailableFormat').click(function(){
-                window.open("{{route('operations.revision.calculation.mailable_view',[$revision->id,'full'])}}");
-            });
-            $('#skeletalHotel').click(function(){
-                window.open("{{route('operations.revision.calculation.mailable_view',[$revision->id,'skeletalHotel'])}}");
-            });
-            $('#simpleSkeletal').click(function(){
-                window.open("{{route('operations.revision.calculation.mailable_view',[$revision->id,'simpleSkeletal'])}}");
-            });
-            $('#itineraryOnly').click(function(){
-                window.open("{{route('operations.revision.calculation.mailable_view',[$revision->id,'itineraryOnly'])}}");
-            });
+            $("body").removeClass("dark-mode");
         </script>
     @endsection

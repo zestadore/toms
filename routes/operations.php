@@ -17,7 +17,7 @@ Route::middleware(['auth'])->name('operations.')->prefix('operations')->group(fu
         Route::get('get-vehicle-rates/{total_km}/{days}/{vehicle_id}', [App\Http\Controllers\Operations\Quotations\RateController::class, 'getVehicleRate'])->name('vehicle-rate.get');
         Route::post('save-quote-details', [App\Http\Controllers\Operations\Quotations\QuotationController::class, 'saveQuoteRevisonDetails'])->name('quote-revisions-details.save');
         Route::get('revision-calculation-view/{rev_id}', [App\Http\Controllers\Operations\Quotations\QuotationController::class, 'revisionCalculationView'])->name('revision.calculation.view');
-        Route::get('revision-calculation-mailable-view/{rev_id}', [App\Http\Controllers\Operations\Quotations\QuotationController::class, 'revisionCalculationMailableView'])->name('revision.calculation.mailable_view');
+        Route::get('revision-calculation-mailable-view/{rev_id}/{choice}', [App\Http\Controllers\Operations\Quotations\QuotationController::class, 'revisionCalculationMailableView'])->name('revision.calculation.mailable_view');
         Route::post('copy-revision/{rev_id}', [App\Http\Controllers\Operations\Quotations\QuotationController::class, 'copyRevision'])->name('revision.copy');
         Route::post('save-transport-revision', [App\Http\Controllers\Operations\Quotations\QuotationController::class, 'saveTransportationRevision'])->name('transportation-revision.save');
     });
@@ -33,4 +33,6 @@ Route::middleware(['auth'])->name('operations.')->prefix('operations')->group(fu
     Route::post('change-guest-name', [App\Http\Controllers\Operations\BookingController::class, 'changeGuestName'])->name('guest_name.change');
     Route::get('booking-details/{booking_id}', [App\Http\Controllers\Operations\BookingController::class, 'getBookingDetails'])->name('booking.details');
     Route::post('booking-details', [App\Http\Controllers\Operations\BookingController::class, 'saveBookingDetails'])->name('booking.details.save');
+    Route::get('vehicle-booking-details/{booking_id}', [App\Http\Controllers\Operations\BookingController::class, 'getVehicleBookingDetails'])->name('vehicle.booking.details');
+    Route::post('vehicle-booking-details', [App\Http\Controllers\Operations\BookingController::class, 'saveVehicleBookingDetails'])->name('vehicle.booking.details.save');
 });
