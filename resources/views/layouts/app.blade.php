@@ -352,6 +352,14 @@
                   </p>
                 </a>
               </li>
+              <li class="nav-item">
+                <a href="{{route('admin.pending.payments')}}" class="nav-link {{ (request()->is('admin/pending-payments*') || request()->is('admin/pending-payments*'))? 'active' : '' }}">
+                  <i class="nav-icon fas fa-rupee-sign"></i>
+                  <p>
+                    Payments
+                  </p>
+                </a>
+              </li>
               <li class="nav-header">SETTINGS</li>
               <li class="nav-item">
                 <a href="{{route('admin.company.details')}}" class="nav-link {{ (request()->is('operations/company-details*'))? 'active' : '' }}">

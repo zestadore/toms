@@ -89,7 +89,7 @@
                                     </td>
                                 </tr>
                             @endforeach
-                        </table>
+                        </table><br>
                         <h5>Vehicle details</h5>
                         <table class="table table-bordered">
                             <tr>
@@ -98,28 +98,57 @@
                                 <td>Allowed Km : {{$revision->allowed_kms}}</td>
                                 <td><button class="btn btn-primary" id="vehicleBookingDetails">Booking details</button></td>
                             </tr>
-                        </table>
-                        {{-- <h5>Pricing</h5>
+                        </table><br>
                         <table class="table table-bordered">
                             <tr>
-                                <td>Accomodation : &#x20b9; {{$revision->accomodation_cost}}</td>
+                                {{-- <td>Accomodation : &#x20b9; {{$revision->accomodation_cost}}</td>
                                 <td>Transportation : &#x20b9; {{$revision->vehicle_rate}}</td>
                                 <td>Grand total : &#x20b9; {{$revision->grand_total}}</td>
                                 <td>GST : &#x20b9; {{$revision->gst_amount}}</td>
                                 <td>Disount : &#x20b9; {{$revision->discount_amount}}</td>
-                                <td>Markup : &#x20b9; {{$revision->markup_amount}}</td>
-                                <td style="color:green;background:yellow;font-style:italic;">Net rate : &#x20b9; {{$revision->net_rate}}</td>
+                                <td>Markup : &#x20b9; {{$revision->markup_amount}}</td> --}}
+                                <td style="color:green;background:yellow;font-style:italic;font-weight: bold;">Net rate : &#x20b9; {{$revision->net_rate}}</td>
                             </tr>
-                        </table> --}}
+                        </table>
                         <hr>
                         <br><div>
                             <div class="btn-group btn-group-toggle" data-toggle="buttons" style="float:right;">
                                 <label class="btn bg-info">
                                   <input type="radio" name="options" autocomplete="off" checked="" id="forwardBooking"> Forward booking
                                 </label>
+                                @if (checkPayments($booking->id,$booking->quote_revision_id)==False)
+                                    <label class="btn bg-info">
+                                        <input type="radio" name="options" autocomplete="off" checked="" id="addPayment"> Add payments
+                                    </label>
+                                @endif
                             </div>
-                        </div>
-                    </div>
+                        </div><br>
+                        <h5>Payments</h5>
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Mode</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                            @if (count($payments)>0)
+                                @foreach ($payments as $payment)
+                                    <tr>
+                                        <td>{{Carbon::parse($payment->created_at)->format('d-M-Y')}}</td>
+                                        <td>₹ {{$payment->amount}}</td>
+                                        <td>{{$payment->bank->bank_name}}</td>
+                                        <td>{{$payment->status==0?"Pending":($payment->status==1?"Approved":"Rejected")}}</td>
+                                        <td><button onClick="viewPayment('{{$payment->payment_details}}')" class="btn btn-info">View</button></td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                <tr>
+                                    <td colspan=3 align="center">No payments made</td>
+                                </tr>
+                            @endif
+                        </table>
+                    </div><br>
                     <!-- /.card-body -->
                   </div><br>
             </div><!--/. container-fluid -->
@@ -225,6 +254,70 @@
             <!-- /.modal-dialog -->
         </div>
         <!-- /.modal -->
+        <div class="modal fade" id="addPaymentModal">
+            <div class="modal-dialog modal-md">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Add payment</h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="status">Bank</label>
+                                <select name="bank" id="bank" class="form-control">
+                                    <option value="0">Other</option>
+                                    @foreach ($banks as $bank)
+                                        <option value="{{$bank->id}}">{{$bank->bank_name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <x-forms.input class="form-control {{ $errors->has('amount') ? ' is-invalid' : '' }}" title="Amount" name="amount" id="amount" type="number" required="True"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <x-forms.input class="form-control {{ $errors->has('payment_details') ? ' is-invalid' : '' }}" title="Payment details" name="payment_details" id="payment_details" type="textarea" required="True"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-info" id="paymentDetailsSave">Save</button>
+                </div>
+              </div>
+              <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+        <div class="modal fade" id="viewPaymentModal">
+            <div class="modal-dialog modal-md">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">View payment details</h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <x-forms.input class="form-control {{ $errors->has('view_payment_details') ? ' is-invalid' : '' }}" title="Payment details" name="view_payment_details" id="view_payment_details" type="textarea" required="True"/>
+                </div>
+                <div class="modal-footer justify-content-between">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+              <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
     @endsection
     @section('scripts')
         <!-- jquery-validation -->
@@ -362,29 +455,74 @@
                 var vehicle_booking_details=$('#vehicle_booking_details').val();
                 if(vehicle_purchase_rate>0 && vendor!=""){
                     $.ajax({
-                    url: "{{route('operations.vehicle.booking.details.save')}}",
-                    type:"post",
-                    data:{
-                        "_token": "{{ csrf_token() }}",
-                        booking_id:bookingId,
-                        quote_revision_details_id:quote_revision_details_id,
-                        vehicle_purchase_rate:vehicle_purchase_rate,
-                        vendor:vendor,
-                        booking_details:vehicle_booking_details,
-                        status:status
-                    },
-                    success:function(response){
-                        if(response.success){
-                            $('#vehicleBookingModal').modal('hide');
-                            swal("Good job!", response.success, "success");
-                        }else{
-                            swal("Oops!", response.error, "error");
-                        }
-                    },
-                });
+                        url: "{{route('operations.vehicle.booking.details.save')}}",
+                        type:"post",
+                        data:{
+                            "_token": "{{ csrf_token() }}",
+                            booking_id:bookingId,
+                            quote_revision_details_id:quote_revision_details_id,
+                            vehicle_purchase_rate:vehicle_purchase_rate,
+                            vendor:vendor,
+                            booking_details:vehicle_booking_details,
+                            status:status
+                        },
+                        success:function(response){
+                            if(response.success){
+                                $('#vehicleBookingModal').modal('hide');
+                                swal("Good job!", response.success, "success");
+                            }else{
+                                swal("Oops!", response.error, "error");
+                            }
+                        },
+                    });
                 }else{
                     swal("Oops!", "Kindly fill the entire details!", "error");
                 }
             });
+
+            $('#addPayment').click(function(){
+                $('#bank').val(0);
+                $('#amount').val(0);
+                $('#payment_details').val("");
+                $('#addPaymentModal').modal('show');
+            });
+
+            $('#paymentDetailsSave').click(function(){
+                var bank=$('#bank').val();
+                var amount=$('#amount').val();
+                var payment_details=$('#payment_details').val();
+                var booking_id="{{$booking->id}}";
+                var quotation_id="{{$booking->quotaion_id}}";
+                if(amount>0 && payment_details!=null){
+                    $.ajax({
+                        url: "{{route('operations.payment-details.save')}}",
+                        type:"post",
+                        data:{
+                            "_token": "{{ csrf_token() }}",
+                            booking_id:booking_id,
+                            quotation_id:quotation_id,
+                            payment_details:payment_details,
+                            amount:amount,
+                            bank_id:bank,
+                        },
+                        success:function(response){
+                            if(response.success){
+                                $('#addPaymentModal').modal('hide');
+                                swal("Good job!", response.success, "success");
+                                window.location.reload();
+                            }else{
+                                swal("Oops!", response.error, "error");
+                            }
+                        },
+                    });
+                }else{
+                    swal("Oops!", "Kindly fill the entire details!", "error");
+                }
+            });
+
+            function viewPayment(details){
+                $('#view_payment_details').val(details);
+                $('#viewPaymentModal').modal('show');
+            }
         </script>
     @endsection

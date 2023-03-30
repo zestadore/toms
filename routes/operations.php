@@ -35,4 +35,5 @@ Route::middleware(['auth'])->name('operations.')->prefix('operations')->group(fu
     Route::post('booking-details', [App\Http\Controllers\Operations\BookingController::class, 'saveBookingDetails'])->name('booking.details.save');
     Route::get('vehicle-booking-details/{booking_id}', [App\Http\Controllers\Operations\BookingController::class, 'getVehicleBookingDetails'])->name('vehicle.booking.details');
     Route::post('vehicle-booking-details', [App\Http\Controllers\Operations\BookingController::class, 'saveVehicleBookingDetails'])->name('vehicle.booking.details.save');
+    Route::post('payment-details', [App\Http\Controllers\Operations\BookingController::class, 'savePaymentDetails'])->name('payment-details.save');
 });

@@ -7,6 +7,9 @@ use App\Models\Booking;
 use App\Models\Quotation;
 use App\Models\QuoteRevision;
 use App\Models\VehicleBooking;
+use App\Models\Payment;
+use App\Models\Bank;
+use App\Http\Requests\ValidatePayment;
 use Illuminate\Support\Facades\Crypt;
 use DataTables;
 use App\Jobs\ForwardBookings;
@@ -41,7 +44,9 @@ class BookingController extends Controller
         $booking=Booking::find($id);
         $revision=QuoteRevision::join('quotations','quote_revisions.quotation_id','quotations.id')
             ->select(['quote_revisions.*','quotations.guest_name'])->find($booking->quote_revision_id);
-        return view('application.bookings.view.index',['revision'=>$revision,'booking'=>$booking]);
+        $payments=Payment::where('booking_id',Crypt::decrypt($booking->id))->where('quotation_id',$booking->quotaion_id)->get();
+        $banks=Bank::where('status',1)->get();
+        return view('application.bookings.view.index',['revision'=>$revision,'booking'=>$booking,'payments'=>$payments,'banks'=>$banks]);
     }
 
     public function forwardBookings($id)
@@ -102,6 +107,23 @@ class BookingController extends Controller
             return response()->json(['success'=>"Booking details updated successfully!"]);
         }else{
             return response()->json(['error'=>"Failed to update the booking details, kindly try again!"]);
+        }
+    }
+
+    public function savePaymentDetails(ValidatePayment $request)
+    {
+        $data=[
+            'booking_id'=>Crypt::decrypt($request->booking_id),
+            'quotation_id'=>$request->quotation_id,
+            'bank_id'=>Crypt::decrypt($request->bank_id),
+            'payment_details'=>$request->payment_details,
+            'amount'=>$request->amount
+        ];
+        $res=Payment::create($data);
+        if($res){
+            return response()->json(['success'=>"Payment details updated successfully!"]);
+        }else{
+            return response()->json(['error'=>"Failed to update the payment details, kindly try again!"]);
         }
     }
 }

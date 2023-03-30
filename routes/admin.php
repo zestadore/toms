@@ -30,4 +30,7 @@ Route::middleware(['auth'])->name('admin.')->prefix('admin')->namespace("App\Htt
     Route::resource('itinerary', ItineraryController::class);
     // Bank
     Route::resource('banks', BankController::class);
+    Route::get('/pending-payments', [App\Http\Controllers\Admin\HomeController::class, 'getPendingpayments'])->name('pending.payments')->middleware('can:isAdmin');
+    Route::post('approve-payment', [App\Http\Controllers\Admin\HomeController::class, 'approvePayment'])->name('payment.approve')->middleware('can:isAdmin');
+    Route::post('reject-payment', [App\Http\Controllers\Admin\HomeController::class, 'rejectPayment'])->name('payment.reject')->middleware('can:isAdmin');
 });

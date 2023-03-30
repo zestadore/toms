@@ -2,7 +2,9 @@
  use App\Models\Availability;
  use App\Models\Itinerary;
  use App\Models\BookingDetails;
- use Illuminate\Support\Facades\Crypt;
+ use App\Models\Payment;
+use App\Models\QuoteRevision;
+use Illuminate\Support\Facades\Crypt;
  use Illuminate\Support\Facades\Auth;
 
 function getAvailabilityStatus($id){
@@ -35,4 +37,14 @@ function getItinerary($id){
 function getBookingDetailsId($id){
     $detail=BookingDetails::where('quote_revision_details_id',Crypt::decrypt($id))->first();
     return $detail->id;
+}
+
+function checkPayments($bookingId,$quoteRevisionId){
+    $revision=QuoteRevision::find($quoteRevisionId);
+    $payments=Payment::where('booking_id',Crypt::decrypt($bookingId))->whereIn('status',[0,1])->sum('amount');
+    if($revision->net_rate<=$payments){
+        return True;
+    }else{
+        return False;
+    }
 }
