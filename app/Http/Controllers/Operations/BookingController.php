@@ -9,6 +9,7 @@ use App\Models\QuoteRevision;
 use App\Models\VehicleBooking;
 use App\Models\Payment;
 use App\Models\Bank;
+use App\Models\OverDue;
 use App\Http\Requests\ValidatePayment;
 use Illuminate\Support\Facades\Crypt;
 use DataTables;
@@ -20,7 +21,7 @@ class BookingController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data= Booking::query()->join('quote_revisions','bookings.quote_revision_id','quote_revisions.id')->join('quotations','quote_revisions.quotation_id','quotations.id')-> select(['bookings.*','quotations.*','quote_revisions.rev_id','bookings.id as booking_id']);
+            $data= Booking::query()->join('quote_revisions','bookings.quote_revision_id','quote_revisions.id')->join('quotations','quote_revisions.quotation_id','quotations.id')-> select(['bookings.*','quotations.*','quote_revisions.rev_id','bookings.id as booking_id','bookings.status as book_status']);
             $status = $request->status_search;
             
             return DataTables::of($data)
@@ -77,6 +78,14 @@ class BookingController extends Controller
     {
         $details=BookingDetails::find(Crypt::decrypt($request->id));
         $res=$details->update($request->except(['_token','id']));
+        if($request->status==1){
+            $detailsCount=BookingDetails::where('booking_id',$details->booking_id)->where('status',0)->count();
+            $vehicleCount=VehicleBooking::where('booking_id',$details->booking_id)->where('status',0)->count();
+            if($detailsCount==0 and $vehicleCount==0){
+                $booking=Booking::find($details->booking_id);
+                $booking->update(['status'=>1]);
+            }
+        }
         if($res){
             return response()->json(['success'=>"Booking details updated successfully!"]);
         }else{
@@ -103,6 +112,13 @@ class BookingController extends Controller
             'booking_details'=>$request->booking_details
         ];
         $res=VehicleBooking::updateOrCreate(['booking_id'=>Crypt::decrypt($request->booking_id),'quote_revision_details_id'=>Crypt::decrypt($request->quote_revision_details_id)],$data);
+        if($request->status==1){
+            $detailsCount=BookingDetails::where('booking_id',Crypt::decrypt($request->booking_id))->where('status',0)->count();
+            if($detailsCount==0){
+                $booking=Booking::find(Crypt::decrypt($request->booking_id));
+                $booking->update(['status'=>1]);
+            }
+        }
         if($res){
             return response()->json(['success'=>"Booking details updated successfully!"]);
         }else{
@@ -125,5 +141,43 @@ class BookingController extends Controller
         }else{
             return response()->json(['error'=>"Failed to update the payment details, kindly try again!"]);
         }
+    }
+
+    public function cancelBooking(Request $request)
+    {
+        $booking=Booking::find(Crypt::decrypt($request->id));
+        $res=$booking->update(['status'=>3,'note'=>$request->note]);
+        $quoteRevision=QuoteRevision::find($booking->quote_revision_id);
+        $quoteRevision->update(['status'=>3,'note'=>$request->note]);
+        $payments=Payment::where('booking_id',Crypt::decrypt($booking->id))->whereIn('status',[0,1])->get();
+        $items=[];
+        foreach($payments as $payment){
+            $items[]=[
+                'old_booking_id'=>$payment->booking_id,
+                'old_quotation_id'=>$payment->quotation_id,
+                'bank_id'=>$payment->bank_id,
+                'amount'=>$payment->amount,
+                'payment_details'=>$payment->payment_details,
+                'status'=>0,
+                'created_at'=>Now()
+            ];
+        }
+        if(count($items)){
+            OverDue::insert( $items);
+        }
+        if($res){
+            return response()->json(['success'=>"Booking cancelled successfully!"]);
+        }else{
+            return response()->json(['error'=>"Failed to cancel the booking, kindly try again!"]);
+        }
+    }
+
+    public function generateInvoice($id,$choice)
+    {
+        $id=Crypt::decrypt($id);
+        $booking=Booking::find($id);
+        $revision=QuoteRevision::join('quotations','quote_revisions.quotation_id','quotations.id')
+            ->select(['quote_revisions.*','quotations.guest_name'])->find($booking->quote_revision_id);
+        return view('application.bookings.invoice',['revision'=>$revision,'booking'=>$booking,'id'=>Crypt::encrypt($id),'choice'=>$choice]);
     }
 }

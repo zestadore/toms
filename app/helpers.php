@@ -48,3 +48,9 @@ function checkPayments($bookingId,$quoteRevisionId){
         return False;
     }
 }
+
+function getPendingPayments($bookingId,$quoteRevisionId){
+    $revision=QuoteRevision::find($quoteRevisionId);
+    $payments=Payment::where('booking_id',$bookingId)->whereIn('status',[0,1])->sum('amount');
+    return ['balance'=>($revision->net_rate-$payments),'amount_paid'=>$payments,'total_amount'=>$revision->net_rate];
+}

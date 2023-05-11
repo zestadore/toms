@@ -121,6 +121,14 @@
                                         <input type="radio" name="options" autocomplete="off" checked="" id="addPayment"> Add payments
                                     </label>
                                 @endif
+                                @if (checkPayments($booking->id,$booking->quote_revision_id)==True)
+                                    <label class="btn bg-info">
+                                        <input type="radio" name="options" autocomplete="off" checked="" id="generateInvoice"> Generate invoice
+                                    </label>
+                                @endif
+                                <label class="btn bg-info">
+                                    <input type="radio" name="options" autocomplete="off" checked="" id="cancelBooking"> Cancel booking
+                                </label>
                             </div>
                         </div><br>
                         <h5>Payments</h5>
@@ -240,7 +248,7 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <x-forms.input class="form-control {{ $errors->has('vehicle_booking_details') ? ' is-invalid' : '' }}" title="Booking details" name="vehicle_booking_details" id="vehicle_booking_details" type="textarea" required="False"/>
+                            <x-forms.input class="form-control {{ $errors->has('vehicle_booking_details') ? ' is-invalid' : '' }}" title="Booking details" name="vehicle_booking_details" id="vehicle_booking_details" type="textarea" required="True"/>
                         </div>
                     </div>
                 </div>
@@ -318,6 +326,59 @@
             </div>
             <!-- /.modal-dialog -->
         </div>
+        <!-- /.modal -->
+        <div class="modal fade" id="viewCancelModal">
+            <div class="modal-dialog modal-md">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Cancel booking</h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <x-forms.input class="form-control {{ $errors->has('cancel_booking') ? ' is-invalid' : '' }}" title="Reason for cancellation" name="cancel_booking" id="cancel_booking" type="textarea" required="True"/>
+                </div>
+                <div class="modal-footer justify-content-between">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-info" id="cancelBookingSave">Cancel booking</button>
+                </div>
+              </div>
+              <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <div class="modal fade" id="invoiceModal">
+            <div class="modal-dialog modal-md">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Choose invoice type</h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div class="custom-control custom-radio">
+                          <input class="custom-control-input custom-control-input-warning custom-control-input-outline" type="radio" id="customRadio4" name="invoice_type" checked="">
+                          <label for="customRadio4" class="custom-control-label">GST invoice</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                          <input class="custom-control-input custom-control-input-warning custom-control-input-outline" type="radio" id="customRadio5" name="invoice_type">
+                          <label for="customRadio5" class="custom-control-label">Without GST invoice</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-success" id="prepareInvoice">Generate</button>
+                </div>
+              </div>
+              <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
     @endsection
     @section('scripts')
         <!-- jquery-validation -->
@@ -453,7 +514,7 @@
                 var vendor=$('#vendor').val();
                 var status=$('#vehicle_status').val();
                 var vehicle_booking_details=$('#vehicle_booking_details').val();
-                if(vehicle_purchase_rate>0 && vendor!=""){
+                if(vehicle_purchase_rate>0 && vendor!="" && vehicle_booking_details!=""){
                     $.ajax({
                         url: "{{route('operations.vehicle.booking.details.save')}}",
                         type:"post",
@@ -524,5 +585,62 @@
                 $('#view_payment_details').val(details);
                 $('#viewPaymentModal').modal('show');
             }
+
+            $('#cancelBooking').click(function(){
+                swal({
+                    title: 'Cancel?',
+                    text: "Are you sure, you cannot revert it?",
+                    icon: 'warning',
+                    buttons: true,
+                    dangerMode: true,
+                }).then((result) => {
+                    if (result) {
+                        $('#viewCancelModal').modal('show');
+                    }
+                })
+            });
+
+            $('#cancelBookingSave').click(function(){
+                var note=$('#cancel_booking').val();
+                if(note!=null && note!=""){
+                    var bookingId="{{$booking->id}}";
+                    $.ajax({
+                        url: "{{route('operations.booking.cancel')}}",
+                        type:"post",
+                        data:{
+                            "_token": "{{ csrf_token() }}",
+                            id:bookingId,
+                            note:note,
+                        },
+                        success:function(response){
+                            if(response.success){
+                                $('#viewCancelModal').modal('hide');
+                                swal("Oops!", response.success, "success");
+                                window.location.reload();
+                            }else{
+                                swal("Oops!", response.error, "error");
+                            }
+                        },
+                    });
+                }
+            });
+
+            $('#generateInvoice').click(function(){
+                $('#invoiceModal').modal('show');
+            });
+
+            $('#prepareInvoice').click(function(){
+                var gstType="gst";
+                var booking_id="{{$booking->id}}";
+                if($('#customRadio4').is(':checked')) { 
+                    gstType="gst";
+                }else{
+                    gstType="non_gst";
+                }
+                var url="{{route('operations.invoice.show',['ID','CHOICE'])}}";
+                url=url.replace('ID',booking_id);
+                url=url.replace('CHOICE',gstType);
+                window.location.href=url;
+            });
         </script>
     @endsection

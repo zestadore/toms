@@ -27,9 +27,9 @@ class QuotationController extends Controller
     {
         if ($request->ajax()) {
             if(Auth::user()->can('isAdmin')){
-                $data= Quotation::query();
+                $data= Quotation::query()->latest('created_at');
             }else{
-                $data= Quotation::query()->where('assigned_to',Auth::user()->id);
+                $data= Quotation::query()->where('assigned_to',Auth::user()->id)->latest('created_at');
             }
             $search = $request->search;
             if ($search) {

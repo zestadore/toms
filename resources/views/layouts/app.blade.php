@@ -360,6 +360,14 @@
                   </p>
                 </a>
               </li>
+              <li class="nav-item">
+                <a href="{{route('operations.overdues.index')}}" class="nav-link {{ (request()->is('operations/overdues*') || request()->is('operations/overdues*'))? 'active' : '' }}">
+                  <i class="nav-icon fas fa-donate"></i>
+                  <p>
+                    Overdues
+                  </p>
+                </a>
+              </li>
               <li class="nav-header">SETTINGS</li>
               <li class="nav-item">
                 <a href="{{route('admin.company.details')}}" class="nav-link {{ (request()->is('operations/company-details*'))? 'active' : '' }}">

@@ -36,4 +36,9 @@ Route::middleware(['auth'])->name('operations.')->prefix('operations')->group(fu
     Route::get('vehicle-booking-details/{booking_id}', [App\Http\Controllers\Operations\BookingController::class, 'getVehicleBookingDetails'])->name('vehicle.booking.details');
     Route::post('vehicle-booking-details', [App\Http\Controllers\Operations\BookingController::class, 'saveVehicleBookingDetails'])->name('vehicle.booking.details.save');
     Route::post('payment-details', [App\Http\Controllers\Operations\BookingController::class, 'savePaymentDetails'])->name('payment-details.save');
+    Route::post('cancel-booking', [App\Http\Controllers\Operations\BookingController::class, 'cancelBooking'])->name('booking.cancel');
+    Route::get('overdues', [App\Http\Controllers\Operations\OverDueController::class, 'index'])->name('overdues.index');
+    Route::get('get-bookings-list/{id}', [App\Http\Controllers\Operations\OverDueController::class, 'getBookingsList'])->name('bookings.list');
+    Route::post('apply-payment', [App\Http\Controllers\Operations\OverDueController::class, 'applyPayment'])->name('payment.apply');
+    Route::get('invoice/{id}/{choice}', [App\Http\Controllers\Operations\BookingController::class, 'generateInvoice'])->name('invoice.show');
 });

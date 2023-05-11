@@ -69,7 +69,7 @@
                                     <th>{{ __('Rev id') }}</th>
                                     <th>{{ __('Guest name') }}</th>
                                     {{-- <th>{{ __('Requested') }}</th> --}}
-                                    {{-- <th>{{ __('Status') }}</th> --}}
+                                    <th>{{ __('Status') }}</th>
                                     <th class="nosort">Action</th>
                                 </tr>
                             </thead>
@@ -124,6 +124,20 @@
                         {
                             data: 'guest_name',
                             name: 'guest_name'
+                        },
+                        {
+                            data: 'book_status',
+                            name: 'book_status',
+                            render: function(data) {
+                                if (data==0) {
+                                    return "<span class='badge badge-info'>Pending</span>";
+                                }else if(data==1 || data==2){
+                                    return "<span class='badge badge-success'>Confirmed</span>";
+                                }else if(data==3){
+                                    return "<span class='badge badge-danger'>Cancelled</span>";
+                                }
+                                
+                            }
                         },
                         {
                             data: 'action',
