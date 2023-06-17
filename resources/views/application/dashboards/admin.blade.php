@@ -8,8 +8,7 @@
             <div class="info-box-content">
             <span class="info-box-text">Pending quotations</span>
             <span class="info-box-number">
-                10
-                <small>%</small>
+                {{$pendingQuotationCount}}
             </span>
             </div>
             <!-- /.info-box-content -->

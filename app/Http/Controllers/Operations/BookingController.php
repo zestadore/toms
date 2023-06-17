@@ -10,6 +10,7 @@ use App\Models\VehicleBooking;
 use App\Models\Payment;
 use App\Models\Bank;
 use App\Models\OverDue;
+use App\Models\Company;
 use App\Http\Requests\ValidatePayment;
 use Illuminate\Support\Facades\Crypt;
 use DataTables;
@@ -176,8 +177,12 @@ class BookingController extends Controller
     {
         $id=Crypt::decrypt($id);
         $booking=Booking::find($id);
+        $company=Company::first();
         $revision=QuoteRevision::join('quotations','quote_revisions.quotation_id','quotations.id')
             ->select(['quote_revisions.*','quotations.guest_name'])->find($booking->quote_revision_id);
-        return view('application.bookings.invoice',['revision'=>$revision,'booking'=>$booking,'id'=>Crypt::encrypt($id),'choice'=>$choice]);
+        $quotation=Quotation::find($revision->quotation_id);
+        $banks=Bank::where('status',1)->get();
+        // dd($revision);
+        return view('application.bookings.invoice',['revision'=>$revision,'booking'=>$booking,'id'=>Crypt::encrypt($id),'choice'=>$choice,'company'=>$company,'agent'=>$quotation?->agent,'quotation'=>$quotation,'banks'=>$banks]);
     }
 }

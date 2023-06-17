@@ -1,10 +1,14 @@
+
+@php
+    use Carbon\Carbon;
+@endphp
 @extends('layouts.app')
     @section('title')
         <title>TOMS | Invoice</title>
     @endsection
     @section('breadcrump')
         <div class="col-sm-6">
-            <h1 class="m-0">Bookings</h1>
+            <h1 class="m-0">Invoice</h1>
         </div><!-- /.col -->
         <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -20,8 +24,8 @@
         <div class="row">
           <div class="col-12">
             <h4>
-              <i class="fas fa-globe"></i> AdminLTE, Inc.
-              <small class="float-right">Date: 2/10/2014</small>
+              <i class="fas fa-globe"></i> {{$company?->company_name}}.
+              <small class="float-right">Date: {{Carbon::parse(Now())->format('d/M/Y')}}</small>
             </h4>
           </div>
           <!-- /.col -->
@@ -31,31 +35,28 @@
           <div class="col-sm-4 invoice-col">
             From
             <address>
-              <strong>Admin, Inc.</strong><br>
-              795 Folsom Ave, Suite 600<br>
-              San Francisco, CA 94107<br>
-              Phone: (804) 123-5432<br>
-              Email: info@almasaeedstudio.com
+              <strong>{{$company?->company_name}}.</strong><br>
+              {{$company?->address}}<br>
+              {{$company?->contact_1}} / {{$company?->contact_2}}<br>
+              {{$company?->email_id}}<br>
+              {{$company?->url}}
             </address>
           </div>
           <!-- /.col -->
           <div class="col-sm-4 invoice-col">
             To
             <address>
-              <strong>John Doe</strong><br>
-              795 Folsom Ave, Suite 600<br>
-              San Francisco, CA 94107<br>
-              Phone: (555) 539-1037<br>
-              Email: john.doe@example.com
+              <strong>{{$agent?->company_name}}</strong><br>
+              {{$agent?->address}}<br>
+              {{$agent?->contact}}<br>
+              {{$agent?->email}}<br>
+              {{$agent?->website}}
             </address>
           </div>
           <!-- /.col -->
           <div class="col-sm-4 invoice-col">
-            <b>Invoice #007612</b><br>
-            <br>
-            <b>Order ID:</b> 4F3S8J<br>
-            <b>Payment Due:</b> 2/22/2014<br>
-            <b>Account:</b> 968-34567
+            <b>Invoice #IN{{$quotation?->quote_id}}</b><br>
+            <b>Booking ID:</b> {{$quotation?->quote_id}}<br>
           </div>
           <!-- /.col -->
         </div>
@@ -67,42 +68,27 @@
             <table class="table table-striped">
               <thead>
               <tr>
-                <th>Qty</th>
-                <th>Product</th>
-                <th>Serial #</th>
-                <th>Description</th>
-                <th>Subtotal</th>
+                <th>Sl no.</th>
+                <th><span style="float:right;">Description</span></th>
               </tr>
               </thead>
               <tbody>
-              <tr>
-                <td>1</td>
-                <td>Call of Duty</td>
-                <td>455-981-221</td>
-                <td>El snort testosterone trophy driving gloves handsome</td>
-                <td>$64.50</td>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>Need for Speed IV</td>
-                <td>247-925-726</td>
-                <td>Wes Anderson umami biodiesel</td>
-                <td>$50.00</td>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>Monsters DVD</td>
-                <td>735-845-642</td>
-                <td>Terry Richardson helvetica tousled street art master</td>
-                <td>$10.70</td>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>Grown Ups Blue Ray</td>
-                <td>422-568-642</td>
-                <td>Tousled lomo letterpress</td>
-                <td>$25.99</td>
-              </tr>
+                @if (count($revision?->revisionDetails)>0)
+                    @foreach ($revision?->revisionDetails as $item)
+                      <tr>
+                          <td>{{$loop->iteration}}</td>
+                          <td align="right">
+                              {{$item->destination?->destination}} - {{$item->hotel?->hotel}}({{$item->roomCategory?->room_category}}) - {{Carbon::parse($item->checkin)->format('d-M-Y')}}
+                          </td>
+                      </tr>
+                    @endforeach
+                    @if ($revision->vehicle)
+                      <tr>
+                        <td>Transportation</td>
+                        <td align="right">{{$revision->vehicle?->condition}} {{$revision->vehicle?->vehicle}}</td>
+                      </tr>
+                    @endif
+                @endif
               </tbody>
             </table>
           </div>
@@ -114,38 +100,32 @@
           <!-- accepted payments column -->
           <div class="col-6">
             <p class="lead">Payment Methods:</p>
-            <img src="../../dist/img/credit/visa.png" alt="Visa">
-            <img src="../../dist/img/credit/mastercard.png" alt="Mastercard">
-            <img src="../../dist/img/credit/american-express.png" alt="American Express">
-            <img src="../../dist/img/credit/paypal2.png" alt="Paypal">
-
-            <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">
-              Etsy doostang zoodles disqus groupon greplin oooj voxy zoodles, weebly ning heekya handango imeem
-              plugg
-              dopplr jibjab, movity jajah plickers sifteo edmodo ifttt zimbra.
-            </p>
+            @foreach ($banks as $item)
+              <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">
+                  <strong>{{$item?->bank_name}}</strong><br>
+                  Name : {{$item?->account_name}} / Acc no : {{$item?->account_namber}}<br>
+                  {{$item?->address}} / IFSC : {{$item?->ifsc}}
+              </p>
+            @endforeach
           </div>
           <!-- /.col -->
           <div class="col-6">
-            <p class="lead">Amount Due 2/22/2014</p>
 
             <div class="table-responsive">
               <table class="table">
                 <tbody><tr>
                   <th style="width:50%">Subtotal:</th>
-                  <td>$250.30</td>
+                  <td>₹ {{$revision->grand_total + $revision->markup_amount}}</td>
                 </tr>
+                @if ($revision?->gst_amount>0)
+                  <tr>
+                    <th>GST</th>
+                    <td>₹ {{$revision?->gst_amount}}</td>
+                  </tr>
+                @endif
                 <tr>
-                  <th>Tax (9.3%)</th>
-                  <td>$10.34</td>
-                </tr>
-                <tr>
-                  <th>Shipping:</th>
-                  <td>$5.80</td>
-                </tr>
-                <tr>
-                  <th>Total:</th>
-                  <td>$265.24</td>
+                  <th>Net rate:</th>
+                  <td>₹ {{$revision->net_rate}}</td>
                 </tr>
               </tbody></table>
             </div>
@@ -175,6 +155,9 @@
                 window.print();
                 $('#printButton').css('color', 'white');
             });
+            $(document).ready(function() {
+              $("body").removeClass("dark-mode");
+            })
       </script>
     @endsection
     

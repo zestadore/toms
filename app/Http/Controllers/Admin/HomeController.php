@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Payment;
+use App\Models\Quotation;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -18,7 +19,8 @@ class HomeController extends Controller
 
     public function dashboard()
     {
-        return view('application.dashboard');
+        $quotations=Quotation::where('status',0)->count();
+        return view('application.dashboard',['pendingQuotationCount'=>$quotations]);
     }
 
     public function changePassword()
