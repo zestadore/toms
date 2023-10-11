@@ -38,33 +38,6 @@
       <li class="nav-item">
         <a href="Javascript::void()" class="h1"><img src="{{asset('assets/toms.png')}}" width=50% style="float:right;"></a>
       </li>
-      <!-- Notifications Dropdown Menu -->
-      <li class="nav-item dropdown">
-        <a class="nav-link" data-toggle="dropdown" href="#">
-          <i class="far fa-bell"></i>
-          <span class="badge badge-warning navbar-badge">15</span>
-        </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-          <span class="dropdown-item dropdown-header">15 Notifications</span>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-envelope mr-2"></i> 4 new messages
-            <span class="float-right text-muted text-sm">3 mins</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-users mr-2"></i> 8 friend requests
-            <span class="float-right text-muted text-sm">12 hours</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-file mr-2"></i> 3 new reports
-            <span class="float-right text-muted text-sm">2 days</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
-        </div>
-      </li>
       <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
           <i class="far fa-user"></i>
@@ -128,29 +101,31 @@
                 </a>
               </li>
               <li class="nav-header">MASTERS</li>
-              <li class="nav-item {{ (request()->is('admin/members*'))? 'menu-open' : '' }}">
-                <a href="#" class="nav-link {{ (request()->is('admin/members*'))? 'active' : '' }}">
-                  <i class="nav-icon fas fa-user"></i>
-                  <p>
-                    Members
-                    <i class="right fas fa-angle-left"></i>
-                  </p>
-                </a>
-                <ul class="nav nav-treeview">
-                  <li class="nav-item">
-                    <a href="{{route('admin.members.index')}}" class="nav-link {{ (request()->is('admin/members'))? 'active' : '' }}">
-                      <i class="far fa-circle nav-icon"></i>
-                      <p>List</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="{{route('admin.members.create')}}" class="nav-link {{ (request()->is('admin/members/create'))? 'active' : '' }}">
-                      <i class="far fa-circle nav-icon"></i>
-                      <p>Create</p>
-                    </a>
-                  </li>
-                </ul>
-              </li>
+              @canany(['isAdmin'])
+                <li class="nav-item {{ (request()->is('admin/members*'))? 'menu-open' : '' }}">
+                  <a href="#" class="nav-link {{ (request()->is('admin/members*'))? 'active' : '' }}">
+                    <i class="nav-icon fas fa-user"></i>
+                    <p>
+                      Members
+                      <i class="right fas fa-angle-left"></i>
+                    </p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                      <a href="{{route('admin.members.index')}}" class="nav-link {{ (request()->is('admin/members'))? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>List</p>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="{{route('admin.members.create')}}" class="nav-link {{ (request()->is('admin/members/create'))? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Create</p>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+              @endcanany
               <li class="nav-item {{ (request()->is('admin/agents*'))? 'menu-open' : '' }}">
                 <a href="#" class="nav-link {{ (request()->is('admin/agents*'))? 'active' : '' }}">
                   <i class="nav-icon fas fa-users"></i>
@@ -197,6 +172,7 @@
                   </li>
                 </ul>
               </li>
+              @canany(['isAdmin'])
               <li class="nav-item {{ (request()->is('admin/categories*'))? 'menu-open' : '' }}">
                 <a href="#" class="nav-link {{ (request()->is('admin/categories*'))? 'active' : '' }}">
                   <i class="nav-icon fas fa-project-diagram"></i>
@@ -266,6 +242,7 @@
                   </li>
                 </ul>
               </li>
+              @endcanany
               <li class="nav-item {{ (request()->is('admin/itinerary*'))? 'menu-open' : '' }}">
                 <a href="#" class="nav-link {{ (request()->is('admin/itinerary*'))? 'active' : '' }}">
                   <i class="nav-icon fas fa-map-signs"></i>
@@ -352,14 +329,16 @@
                   </p>
                 </a>
               </li>
-              <li class="nav-item">
-                <a href="{{route('admin.pending.payments')}}" class="nav-link {{ (request()->is('admin/pending-payments*') || request()->is('admin/pending-payments*'))? 'active' : '' }}">
-                  <i class="nav-icon fas fa-rupee-sign"></i>
-                  <p>
-                    Payments
-                  </p>
-                </a>
-              </li>
+              @canany(['isAdmin', 'isAccounts'])
+                <li class="nav-item">
+                  <a href="{{route('admin.pending.payments')}}" class="nav-link {{ (request()->is('admin/pending-payments*') || request()->is('admin/pending-payments*'))? 'active' : '' }}">
+                    <i class="nav-icon fas fa-rupee-sign"></i>
+                    <p>
+                      Payments
+                    </p>
+                  </a>
+                </li>
+              @endcanany
               <li class="nav-item">
                 <a href="{{route('operations.overdues.index')}}" class="nav-link {{ (request()->is('operations/overdues*') || request()->is('operations/overdues*'))? 'active' : '' }}">
                   <i class="nav-icon fas fa-donate"></i>
@@ -368,38 +347,40 @@
                   </p>
                 </a>
               </li>
-              <li class="nav-header">SETTINGS</li>
-              <li class="nav-item">
-                <a href="{{route('admin.company.details')}}" class="nav-link {{ (request()->is('operations/company-details*'))? 'active' : '' }}">
-                  <i class="nav-icon fas fa-registered"></i>
-                  <p>
-                    Company Details
-                  </p>
-                </a>
-              </li>
-              <li class="nav-item {{ (request()->is('admin/banks*'))? 'menu-open' : '' }}">
-                <a href="#" class="nav-link {{ (request()->is('admin/banks*'))? 'active' : '' }}">
-                  <i class="nav-icon fas fa-landmark"></i>
-                  <p>
-                    Banks
-                    <i class="right fas fa-angle-left"></i>
-                  </p>
-                </a>
-                <ul class="nav nav-treeview">
-                  <li class="nav-item">
-                    <a href="{{route('admin.banks.index')}}" class="nav-link {{ (request()->is('admin/banks'))? 'active' : '' }}">
-                      <i class="far fa-circle nav-icon"></i>
-                      <p>List</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="{{route('admin.banks.create')}}" class="nav-link {{ (request()->is('admin/banks/create'))? 'active' : '' }}">
-                      <i class="far fa-circle nav-icon"></i>
-                      <p>Create</p>
-                    </a>
-                  </li>
-                </ul>
-              </li>
+              @canany(['isAdmin'])
+                <li class="nav-header">SETTINGS</li>
+                <li class="nav-item">
+                  <a href="{{route('admin.company.details')}}" class="nav-link {{ (request()->is('operations/company-details*'))? 'active' : '' }}">
+                    <i class="nav-icon fas fa-registered"></i>
+                    <p>
+                      Company Details
+                    </p>
+                  </a>
+                </li>
+                <li class="nav-item {{ (request()->is('admin/banks*'))? 'menu-open' : '' }}">
+                  <a href="#" class="nav-link {{ (request()->is('admin/banks*'))? 'active' : '' }}">
+                    <i class="nav-icon fas fa-landmark"></i>
+                    <p>
+                      Banks
+                      <i class="right fas fa-angle-left"></i>
+                    </p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                      <a href="{{route('admin.banks.index')}}" class="nav-link {{ (request()->is('admin/banks'))? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>List</p>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="{{route('admin.banks.create')}}" class="nav-link {{ (request()->is('admin/banks/create'))? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Create</p>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+              @endcanany
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
