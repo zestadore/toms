@@ -21,5 +21,3 @@
             @endcan
         </section>
     @endsection
-    
-    
