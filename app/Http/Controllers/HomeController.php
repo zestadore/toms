@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Company;
+use App\Models\Payment;
+use App\Models\Quotation;
+use App\Models\Availability;
+use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -18,6 +22,8 @@ class HomeController extends Controller
     {
         if(Auth::user()->role=="admin"){
             return redirect()->route('admin.dashboard');
+        }elseif(Auth::user()->role=="user"){
+            return view('application.dashboard',$this->userDashboard());
         }else{
             return view('application.dashboard');
         }
@@ -122,5 +128,29 @@ class HomeController extends Controller
         }else{
             return redirect()->back()->with(['error'=>'Failed to update the data']);
         }
+    }
+
+    private function userDashboard()
+    {
+        $quotations=Quotation::where('status',0)->where('assigned_to',Auth::user()->id)->count();
+        $availability=Availability::where('status',0)->where('created_by',Auth::user()->id)->count();
+        $bookings=Booking::where('status',0)->where('created_by',Auth::user()->id)->count();
+        $payments=Payment::where('status',0)->where('created_by',Auth::user()->id)->count();
+        //get total payments added this month using created_at field
+        $paymentsThisMonth=Payment::where('created_by',Auth::user()->id)->where('created_at','>=',date('Y-m-d',strtotime('first day of this month')))->where('created_at','<=',date('Y-m-d',strtotime('last day of this month')))->count();
+        //get total approved payments added this month using created_at field
+        $approvedPaymentsThisMonth=Payment::where('created_by',Auth::user()->id)->where('status',1)->where('created_at','>=',date('Y-m-d',strtotime('first day of this month')))->where('created_at','<=',date('Y-m-d',strtotime('last day of this month')))->count();
+        //get total pending payments added this month using created_at field
+        $pendingPaymentsThisMonth=Payment::where('created_by',Auth::user()->id)->where('status',0)->where('created_at','>=',date('Y-m-d',strtotime('first day of this month')))->where('created_at','<=',date('Y-m-d',strtotime('last day of this month')))->count();
+        //get total rejected payments added this month using created_at field
+        $rejectedPaymentsThisMonth=Payment::where('created_by',Auth::user()->id)->where('status',2)->where('created_at','>=',date('Y-m-d',strtotime('first day of this month')))->where('created_at','<=',date('Y-m-d',strtotime('last day of this month')))->count();
+        return ['pendingQuotationCount'=>$quotations,
+            'pendingAvailabilityCount'=>$availability,
+            'pendingBookingCount'=>$bookings,
+            'pendingPaymentCount'=>$payments,
+            'paymentsThisMonth'=>$paymentsThisMonth,
+            'approvedPaymentsThisMonth'=>$approvedPaymentsThisMonth,
+            'pendingPaymentsThisMonth'=>$pendingPaymentsThisMonth,
+            'rejectedPaymentsThisMonth'=>$rejectedPaymentsThisMonth];
     }
 }

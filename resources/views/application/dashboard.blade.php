@@ -19,5 +19,8 @@
             @can('isAdmin')
                 @include('application.dashboards.admin')
             @endcan
+            @can('isUser')
+                @include('application.dashboards.admin')
+            @endcan
         </section>
     @endsection
