@@ -173,75 +173,75 @@
                 </ul>
               </li>
               @canany(['isAdmin'])
-              <li class="nav-item {{ (request()->is('admin/categories*'))? 'menu-open' : '' }}">
-                <a href="#" class="nav-link {{ (request()->is('admin/categories*'))? 'active' : '' }}">
-                  <i class="nav-icon fas fa-project-diagram"></i>
-                  <p>
-                    Categories
-                    <i class="right fas fa-angle-left"></i>
-                  </p>
-                </a>
-                <ul class="nav nav-treeview">
-                  <li class="nav-item">
-                    <a href="{{route('admin.categories.index')}}" class="nav-link {{ (request()->is('admin/categories'))? 'active' : '' }}">
-                      <i class="far fa-circle nav-icon"></i>
-                      <p>List</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="{{route('admin.categories.create')}}" class="nav-link {{ (request()->is('admin/categories/create'))? 'active' : '' }}">
-                      <i class="far fa-circle nav-icon"></i>
-                      <p>Create</p>
-                    </a>
-                  </li>
-                </ul>
-              </li>
-              <li class="nav-item {{ (request()->is('admin/hotels*'))? 'menu-open' : '' }}">
-                <a href="#" class="nav-link {{ (request()->is('admin/hotels*'))? 'active' : '' }}">
-                  <i class="nav-icon fas fa-bed"></i>
-                  <p>
-                    Hotels/Resorts
-                    <i class="right fas fa-angle-left"></i>
-                  </p>
-                </a>
-                <ul class="nav nav-treeview">
-                  <li class="nav-item">
-                    <a href="{{route('admin.hotels.index')}}" class="nav-link {{ (request()->is('admin/hotels'))? 'active' : '' }}">
-                      <i class="far fa-circle nav-icon"></i>
-                      <p>List</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="{{route('admin.hotels.create')}}" class="nav-link {{ (request()->is('admin/hotels/create'))? 'active' : '' }}">
-                      <i class="far fa-circle nav-icon"></i>
-                      <p>Create</p>
-                    </a>
-                  </li>
-                </ul>
-              </li>
-              <li class="nav-item {{ (request()->is('admin/vehicles*'))? 'menu-open' : '' }}">
-                <a href="#" class="nav-link {{ (request()->is('admin/vehicles*'))? 'active' : '' }}">
-                  <i class="nav-icon fas fa-taxi"></i>
-                  <p>
-                    Vehicles
-                    <i class="right fas fa-angle-left"></i>
-                  </p>
-                </a>
-                <ul class="nav nav-treeview">
-                  <li class="nav-item">
-                    <a href="{{route('admin.vehicles.index')}}" class="nav-link {{ (request()->is('admin/vehicles'))? 'active' : '' }}">
-                      <i class="far fa-circle nav-icon"></i>
-                      <p>List</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="{{route('admin.vehicles.create')}}" class="nav-link {{ (request()->is('admin/vehicles/create'))? 'active' : '' }}">
-                      <i class="far fa-circle nav-icon"></i>
-                      <p>Create</p>
-                    </a>
-                  </li>
-                </ul>
-              </li>
+                <li class="nav-item {{ (request()->is('admin/categories*'))? 'menu-open' : '' }}">
+                  <a href="#" class="nav-link {{ (request()->is('admin/categories*'))? 'active' : '' }}">
+                    <i class="nav-icon fas fa-project-diagram"></i>
+                    <p>
+                      Categories
+                      <i class="right fas fa-angle-left"></i>
+                    </p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                      <a href="{{route('admin.categories.index')}}" class="nav-link {{ (request()->is('admin/categories'))? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>List</p>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="{{route('admin.categories.create')}}" class="nav-link {{ (request()->is('admin/categories/create'))? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Create</p>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="nav-item {{ (request()->is('admin/hotels*'))? 'menu-open' : '' }}">
+                  <a href="#" class="nav-link {{ (request()->is('admin/hotels*'))? 'active' : '' }}">
+                    <i class="nav-icon fas fa-bed"></i>
+                    <p>
+                      Hotels/Resorts
+                      <i class="right fas fa-angle-left"></i>
+                    </p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                      <a href="{{route('admin.hotels.index')}}" class="nav-link {{ (request()->is('admin/hotels'))? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>List</p>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="{{route('admin.hotels.create')}}" class="nav-link {{ (request()->is('admin/hotels/create'))? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Create</p>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="nav-item {{ (request()->is('admin/vehicles*'))? 'menu-open' : '' }}">
+                  <a href="#" class="nav-link {{ (request()->is('admin/vehicles*'))? 'active' : '' }}">
+                    <i class="nav-icon fas fa-taxi"></i>
+                    <p>
+                      Vehicles
+                      <i class="right fas fa-angle-left"></i>
+                    </p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                      <a href="{{route('admin.vehicles.index')}}" class="nav-link {{ (request()->is('admin/vehicles'))? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>List</p>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="{{route('admin.vehicles.create')}}" class="nav-link {{ (request()->is('admin/vehicles/create'))? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Create</p>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
               @endcanany
               <li class="nav-item {{ (request()->is('admin/itinerary*'))? 'menu-open' : '' }}">
                 <a href="#" class="nav-link {{ (request()->is('admin/itinerary*'))? 'active' : '' }}">
@@ -348,6 +348,15 @@
                 </a>
               </li>
               @canany(['isAdmin'])
+                <li class="nav-header">REPORTS</li>
+                <li class="nav-item">
+                  <a href="{{route('leads.report')}}" class="nav-link {{ (request()->is('leads-report*'))? 'active' : '' }}">
+                    <i class="nav-icon fas fa-align-right"></i>
+                    <p>
+                      Leads Report
+                    </p>
+                  </a>
+                </li>
                 <li class="nav-header">SETTINGS</li>
                 <li class="nav-item">
                   <a href="{{route('admin.company.details')}}" class="nav-link {{ (request()->is('operations/company-details*'))? 'active' : '' }}">
