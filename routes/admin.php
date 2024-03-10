@@ -35,4 +35,4 @@ Route::middleware(['auth'])->name('admin.')->prefix('admin')->namespace("App\Htt
     Route::post('reject-payment', [App\Http\Controllers\Admin\HomeController::class, 'rejectPayment'])->name('payment.reject')->middleware('can:isAdmin');
 });
 Route::get('/leads-report', [App\Http\Controllers\Admin\ReportController::class, 'leadsReport'])->name('leads.report');
-
+Route::get('/bookings-report', [App\Http\Controllers\Admin\ReportController::class, 'bookingsReport'])->name('bookings.report');

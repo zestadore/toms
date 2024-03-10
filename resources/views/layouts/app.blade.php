@@ -357,6 +357,14 @@
                     </p>
                   </a>
                 </li>
+                <li class="nav-item">
+                  <a href="{{route('bookings.report')}}" class="nav-link {{ (request()->is('bookings-report*'))? 'active' : '' }}">
+                    <i class="nav-icon fas fa-align-right"></i>
+                    <p>
+                      Bookings Report
+                    </p>
+                  </a>
+                </li>
                 <li class="nav-header">SETTINGS</li>
                 <li class="nav-item">
                   <a href="{{route('admin.company.details')}}" class="nav-link {{ (request()->is('operations/company-details*'))? 'active' : '' }}">

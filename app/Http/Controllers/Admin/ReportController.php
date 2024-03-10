@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Quotation;
+use App\Models\Booking;
 use DataTables;
 use Auth;
 use Carbon\Carbon;
@@ -45,5 +46,35 @@ class ReportController extends Controller
                 ->make(true);
         }
         return view('application.reports.leads');
+    }
+
+    public function bookingsReport(Request $request)
+    {
+        if ($request->ajax()) {
+            $data= Booking::query()->join('quote_revisions','bookings.quote_revision_id','quote_revisions.id')->join('quotations','quote_revisions.quotation_id','quotations.id')-> select(['bookings.*','quotations.*','quote_revisions.rev_id','bookings.id as booking_id','bookings.status as book_status']);
+            $status = $request->status_search;
+            $fromDate=$request->from_date;
+            $toDate=$request->to_date;
+            if ($status) {
+                $data->where('bookings.status', $status);
+            }
+            if($fromDate && $toDate){
+                $fromDate=Carbon::parse($fromDate)->format('Y-m-d');
+                $toDate=Carbon::parse($toDate)->format('Y-m-d');
+                $data->whereBetween('bookings.created_at', [$fromDate, $toDate]);
+            }
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('quote_revision', function($data) {
+                    if($data->quote_revision){
+                        return $data->quote_revision;
+                    }else{
+                        return Null;
+                    }
+                })
+                ->addColumn('action', 'application.bookings.action')
+                ->make(true);
+        }
+        return view('application.reports.bookings');
     }
 }
