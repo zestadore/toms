@@ -365,6 +365,14 @@
                     </p>
                   </a>
                 </li>
+                <li class="nav-item">
+                  <a href="{{route('payments.report')}}" class="nav-link {{ (request()->is('payments-report*'))? 'active' : '' }}">
+                    <i class="nav-icon fas fa-align-right"></i>
+                    <p>
+                      Payments Report
+                    </p>
+                  </a>
+                </li>
                 <li class="nav-header">SETTINGS</li>
                 <li class="nav-item">
                   <a href="{{route('admin.company.details')}}" class="nav-link {{ (request()->is('operations/company-details*'))? 'active' : '' }}">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Quotation;
 use App\Models\Booking;
+use App\Models\Payment;
 use DataTables;
 use Auth;
 use Carbon\Carbon;
@@ -76,5 +77,32 @@ class ReportController extends Controller
                 ->make(true);
         }
         return view('application.reports.bookings');
+    }
+
+    public function paymentsReport(Request $request)
+    {
+        if ($request->ajax()) {
+            $data= Payment::query();
+            $fromDate=$request->from_date;
+            $toDate=$request->to_date;
+            if($fromDate && $toDate){
+                $fromDate=Carbon::parse($fromDate)->format('Y-m-d');
+                $toDate=Carbon::parse($toDate)->format('Y-m-d');
+                $data->whereBetween('created_at', [$fromDate, $toDate]);
+            }
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('guest_name', function($data){
+                    return $data->quotation->guest_name;
+                })
+                ->addColumn('agent_name', function($data){
+                    return $data->quotation->agent->company_name;
+                })
+                ->addColumn('bank_name', function($data){
+                    return $data->bank?->bank_name ?? "-";
+                })
+                ->make(true);
+        }
+        return view('application.reports.payments');
     }
 }

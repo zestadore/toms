@@ -37,4 +37,8 @@ class Payment extends Model
         return $this->hasOne(Quotation::class, 'id', 'quotation_id');
     }
 
+    public function booking(){
+        return $this->hasOne(Booking::class, 'id', 'booking_id');
+    }
+
 }
