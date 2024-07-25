@@ -85,7 +85,7 @@
                                 <div class="col-lg-4 col-sm-4 col-md-12 col-xs-12">
                                     <div class="form-group">
                                         <label>Category </label>
-                                        <select class="form-control select2bs4" name="category_id" id="category_id" style="width: 100%;">
+                                        <select class="form-control " name="category_id" id="category_id" style="width: 100%;">
                                           <option value="">Select a category</option>
                                           @foreach ($categories as $item)
                                               <option value="{{$item->id}}" @if (Crypt::decrypt($item->id)==$data->category_id)
@@ -194,7 +194,7 @@
                 $('#location').val('{{$data->location}}');
                 // $('#destination_id').val("{{Crypt::encrypt($data->destination_id)}}").trigger('change');
                 $('#inventory').val('{{$data->inventory}}');
-                $('#category_id').val('{{$data->category_id}}');
+                $('#category_id').val('{{$data->category_id}}').trigger('change');
                 $('#contact').val('{{$data->contact}}');
                 $('#reservation_contact').val('{{$data->reservation_contact}}');
                 $('#email').val('{{$data->email}}');
