@@ -20,6 +20,7 @@ Route::middleware(['auth'])->name('operations.')->prefix('operations')->group(fu
         Route::get('revision-calculation-mailable-view/{rev_id}/{choice}', [App\Http\Controllers\Operations\Quotations\QuotationController::class, 'revisionCalculationMailableView'])->name('revision.calculation.mailable_view');
         Route::post('copy-revision/{rev_id}', [App\Http\Controllers\Operations\Quotations\QuotationController::class, 'copyRevision'])->name('revision.copy');
         Route::post('save-transport-revision', [App\Http\Controllers\Operations\Quotations\QuotationController::class, 'saveTransportationRevision'])->name('transportation-revision.save');
+        Route::resource('vehicle-quotations', VehicleQuoteController::class);
     });
     //Availability
     Route::post('ask-availability', [App\Http\Controllers\Operations\AvailabilityController::class, 'askAvailability'])->name('availability.ask');

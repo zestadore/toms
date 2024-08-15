@@ -290,6 +290,14 @@
                 </ul>
               </li>
               <li class="nav-header">OPERATIONS</li>
+              <li class="nav-item">
+                <a href="{{route('operations.vehicle-quotations.index')}}" class="nav-link {{ (request()->is('operations/vehicle-quotations*'))? 'active' : '' }}">
+                  <i class="nav-icon fas fa-car"></i>
+                  <p>
+                    Transportation Quote
+                  </p>
+                </a>
+              </li>
               <li class="nav-item {{ (request()->is('operations/quotations*'))? 'menu-open' : '' }}">
                 <a href="#" class="nav-link {{ (request()->is('operations/quotations*'))? 'active' : '' }}">
                   <i class="nav-icon fas fa-wallet"></i>
